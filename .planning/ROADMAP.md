@@ -34,7 +34,10 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. User can run `navigator --help` and see available subcommands
   3. Configuration file at `~/.config/navigator/config.toml` is created on first run with sensible defaults
   4. All internal path references are resolved to absolute paths at registration time
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 01-01-PLAN.md — Package skeleton, CLI entry point with 8 subcommand stubs, test infrastructure
+- [ ] 01-02-PLAN.md — Config system with TOML persistence and absolute path resolution
 
 ### Phase 2: Command Registry
 **Goal**: Users can register, browse, and manage commands through the CLI
@@ -147,7 +150,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Scaffold | 0/TBD | Not started | - |
+| 1. Project Scaffold | 0/2 | Planning | - |
 | 2. Command Registry | 0/TBD | Not started | - |
 | 3. Execution Core | 0/TBD | Not started | - |
 | 4. Execution Hardening | 0/TBD | Not started | - |
