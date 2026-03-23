@@ -117,60 +117,60 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REG-01 | Pending | Pending |
-| REG-02 | Pending | Pending |
-| REG-03 | Pending | Pending |
-| REG-04 | Pending | Pending |
-| REG-05 | Pending | Pending |
-| REG-06 | Pending | Pending |
-| REG-07 | Pending | Pending |
-| REG-08 | Pending | Pending |
-| REG-09 | Pending | Pending |
-| REG-10 | Pending | Pending |
-| EXEC-01 | Pending | Pending |
-| EXEC-02 | Pending | Pending |
-| EXEC-03 | Pending | Pending |
-| EXEC-04 | Pending | Pending |
-| EXEC-05 | Pending | Pending |
-| EXEC-06 | Pending | Pending |
-| EXEC-07 | Pending | Pending |
-| EXEC-08 | Pending | Pending |
-| EXEC-09 | Pending | Pending |
-| EXEC-10 | Pending | Pending |
-| SCHED-01 | Pending | Pending |
-| SCHED-02 | Pending | Pending |
-| SCHED-03 | Pending | Pending |
-| SCHED-04 | Pending | Pending |
-| SCHED-05 | Pending | Pending |
-| WATCH-01 | Pending | Pending |
-| WATCH-02 | Pending | Pending |
-| WATCH-03 | Pending | Pending |
-| WATCH-04 | Pending | Pending |
-| WATCH-05 | Pending | Pending |
-| WATCH-06 | Pending | Pending |
-| CHAIN-01 | Pending | Pending |
-| CHAIN-02 | Pending | Pending |
-| CHAIN-03 | Pending | Pending |
-| CHAIN-04 | Pending | Pending |
-| CHAIN-05 | Pending | Pending |
-| CHAIN-06 | Pending | Pending |
-| NS-01 | Pending | Pending |
-| NS-02 | Pending | Pending |
-| NS-03 | Pending | Pending |
-| NS-04 | Pending | Pending |
-| INFRA-01 | Pending | Pending |
-| INFRA-02 | Pending | Pending |
-| INFRA-03 | Pending | Pending |
-| INFRA-04 | Pending | Pending |
-| INFRA-05 | Pending | Pending |
-| INFRA-06 | Pending | Pending |
-| INFRA-07 | Pending | Pending |
+| REG-01 | Phase 2 | Pending |
+| REG-02 | Phase 2 | Pending |
+| REG-03 | Phase 2 | Pending |
+| REG-04 | Phase 2 | Pending |
+| REG-05 | Phase 2 | Pending |
+| REG-06 | Phase 2 | Pending |
+| REG-07 | Phase 2 | Pending |
+| REG-08 | Phase 2 | Pending |
+| REG-09 | Phase 10 | Pending |
+| REG-10 | Phase 2 | Pending |
+| EXEC-01 | Phase 3 | Pending |
+| EXEC-02 | Phase 3 | Pending |
+| EXEC-03 | Phase 3 | Pending |
+| EXEC-04 | Phase 4 | Pending |
+| EXEC-05 | Phase 4 | Pending |
+| EXEC-06 | Phase 4 | Pending |
+| EXEC-07 | Phase 3 | Pending |
+| EXEC-08 | Phase 3 | Pending |
+| EXEC-09 | Phase 4 | Pending |
+| EXEC-10 | Phase 4 | Pending |
+| SCHED-01 | Phase 5 | Pending |
+| SCHED-02 | Phase 5 | Pending |
+| SCHED-03 | Phase 5 | Pending |
+| SCHED-04 | Phase 5 | Pending |
+| SCHED-05 | Phase 5 | Pending |
+| WATCH-01 | Phase 6 | Pending |
+| WATCH-02 | Phase 6 | Pending |
+| WATCH-03 | Phase 6 | Pending |
+| WATCH-04 | Phase 6 | Pending |
+| WATCH-05 | Phase 6 | Pending |
+| WATCH-06 | Phase 9 | Pending |
+| CHAIN-01 | Phase 8 | Pending |
+| CHAIN-02 | Phase 8 | Pending |
+| CHAIN-03 | Phase 8 | Pending |
+| CHAIN-04 | Phase 8 | Pending |
+| CHAIN-05 | Phase 8 | Pending |
+| CHAIN-06 | Phase 8 | Pending |
+| NS-01 | Phase 7 | Pending |
+| NS-02 | Phase 7 | Pending |
+| NS-03 | Phase 7 | Pending |
+| NS-04 | Phase 7 | Pending |
+| INFRA-01 | Phase 1 | Pending |
+| INFRA-02 | Phase 9 | Pending |
+| INFRA-03 | Phase 10 | Pending |
+| INFRA-04 | Phase 10 | Pending |
+| INFRA-05 | Phase 1 | Pending |
+| INFRA-06 | Phase 9 | Pending |
+| INFRA-07 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 47 total
-- Mapped to phases: 0
-- Unmapped: 47
+- v1 requirements: 48 total
+- Mapped to phases: 48
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-23*
-*Last updated: 2026-03-23 after initial definition*
+*Last updated: 2026-03-23 after roadmap creation*
