@@ -1,0 +1,89 @@
+# Navigator
+
+## What This Is
+
+A private, Python-based orchestrator that schedules, triggers, and chains Claude Code sessions with proper context, secrets, and permissions. Navigator manages the system's actual crontab and file watchers to run registered commands — wrapping each invocation with environment variables, secret injection, and pre-configured tool permissions. It is globally installed, never exposed to the public internet, and controlled via local CLI or a private messaging bot (Telegram/Discord).
+
+## Core Value
+
+Autonomous task orchestration — registered commands run on schedule or on file changes, with the right context and secrets, without human intervention unless something fails.
+
+## Requirements
+
+### Validated
+
+(None yet — ship to validate)
+
+### Active
+
+- [ ] Living command registry with CRUD operations (register, list, update, pause, resume, delete)
+- [ ] Cron-based scheduling via system crontab — Navigator reads and manages real crontab entries
+- [ ] File/folder watching as a trigger pattern (periodic polling or inotify), with optional time-window constraints
+- [ ] Secret injection — reads secrets from a path, passes them as environment variables to Claude Code subprocess
+- [ ] Environment path (`--environment`) defines the working directory and shared state location for a command
+- [ ] Pre-configured Claude Code permissions (`--allowedTools`) per registered command
+- [ ] Command chaining — commands can trigger other registered commands, running as separate sessions with shared files/state
+- [ ] Multi-project namespacing — commands are namespaced by project, cross-namespace chaining supported
+- [ ] Retry with backoff (`--retries N`) on failure
+- [ ] Push notifications on failure via messaging bot
+- [ ] Remote CLI via private messaging bot (Telegram/Discord) — full CRUD, long-polling, never exposed publicly
+- [ ] Survives reboots — runs as a systemd service (watcher daemon + bot listener)
+- [ ] Globally installed via pip (`pip install navigator`, `navigator` CLI command)
+- [ ] List registered commands by created date for housekeeping (identify stale commands)
+- [ ] Claude Code can understand and invoke the CLI API from other sessions
+- [ ] Exposes skills usable from Claude Code sessions
+
+### Out of Scope
+
+- Public internet exposure — interaction is only via local CLI or private messaging bot through third-party APIs
+- Building the actual skills (scraping, video generation, publishing) — Navigator orchestrates, skills do the work
+- GUI/web dashboard — CLI and messaging bot are the interfaces
+- Multi-user support — this is a single-user private system
+- Replacing PAI (Daniel Miessler's Personal AI Infrastructure) — Navigator is complementary, handling the operational/scheduling layer that PAI does not
+
+## Context
+
+- **User:** Runs Gamescout, a hunting social media/newsletter/consulting company for Vancouver Island, BC. Needs daily content pipelines (5 short video scripts, trend scraping), weekly long-form content (blog + 10min video), Thursday newsletters, and event-driven publishing.
+- **Personal routines:** Workout, dryfire, meditation, nutrition scheduling — eventually managed through Obsidian vault agents that register tasks with Navigator.
+- **Obsidian integration:** Other Claude Code sessions running from an Obsidian vault will call Navigator's CLI to register and manage recurring/one-off tasks.
+- **PAI comparison:** Daniel Miessler's PAI is a contextual wrapper (identity, memory, learning around Claude Code). Navigator is an operational orchestrator (scheduling, triggering, chaining, secret management). They are complementary — PAI skills could run inside Navigator-orchestrated sessions.
+- **Platform:** Currently Pop!_OS/Ubuntu personal machine, will promote to VPS later. Never allow remote access directly — only through messaging bot APIs.
+
+## Constraints
+
+- **Tech stack**: Python — globally installable via pip
+- **Scheduling**: Must use the system's actual crontab, not a reimplementation
+- **Privacy**: Never exposed to public internet. All remote interaction via third-party messaging APIs (Telegram/Discord long-polling)
+- **Portability**: Must work on Pop!_OS, Ubuntu, and eventually VPS environments
+- **Persistence**: Must survive reboots via systemd
+- **Claude Code integration**: CLI must be understandable and invokable by Claude Code agents
+
+## Key Decisions
+
+| Decision | Rationale | Outcome |
+|----------|-----------|---------|
+| Python over TypeScript | Globally installable via pip, user preference | — Pending |
+| System crontab over internal scheduler | Don't reinvent scheduling, leverage battle-tested system tooling | — Pending |
+| Telegram/Discord bot over web API | Privacy-first, never expose to public internet, use existing encrypted channels | — Pending |
+| Navigator (name) | Dune reference — Guild Navigators fold space, routing tasks through the right paths autonomously | — Pending |
+| Complement PAI, don't compete | PAI handles context/identity/memory; Navigator handles scheduling/triggering/orchestration | — Pending |
+
+## Evolution
+
+This document evolves at phase transitions and milestone boundaries.
+
+**After each phase transition** (via `/gsd:transition`):
+1. Requirements invalidated? → Move to Out of Scope with reason
+2. Requirements validated? → Move to Validated with phase reference
+3. New requirements emerged? → Add to Active
+4. Decisions to log? → Add to Key Decisions
+5. "What This Is" still accurate? → Update if drifted
+
+**After each milestone** (via `/gsd:complete-milestone`):
+1. Full review of all sections
+2. Core Value check — still the right priority?
+3. Audit Out of Scope — reasons still valid?
+4. Update Context with current state
+
+---
+*Last updated: 2026-03-23 after initialization*
