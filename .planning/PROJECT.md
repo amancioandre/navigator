@@ -21,13 +21,13 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - ✓ Secret injection — reads secrets from a path, passes them as environment variables to Claude Code subprocess — Phase 3
 - ✓ Environment path (`--environment`) defines the working directory and shared state location for a command — Phase 3
 - ✓ Pre-configured Claude Code permissions (`--allowedTools`) per registered command — Phase 3
+- ✓ Retry with backoff (`--retries N`) on failure — Phase 4
 
 ### Active
 - [ ] Cron-based scheduling via system crontab — Navigator reads and manages real crontab entries
 - [ ] File/folder watching as a trigger pattern (periodic polling or inotify), with optional time-window constraints
 - [ ] Command chaining — commands can trigger other registered commands, running as separate sessions with shared files/state
 - [ ] Multi-project namespacing — commands are namespaced by project, cross-namespace chaining supported
-- [ ] Retry with backoff (`--retries N`) on failure
 - [ ] Push notifications on failure via messaging bot
 - [ ] Remote CLI via private messaging bot (Telegram/Discord) — full CRUD, long-polling, never exposed publicly
 - [ ] Survives reboots — runs as a systemd service (watcher daemon + bot listener)
@@ -88,4 +88,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after Phase 3 completion*
+*Last updated: 2026-03-24 after Phase 4 completion*
