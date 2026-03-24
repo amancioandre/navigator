@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 08-02-PLAN.md
-last_updated: "2026-03-24T20:33:57.158Z"
+status: Ready to execute
+stopped_at: Completed 09-01-PLAN.md
+last_updated: "2026-03-24T20:54:59.328Z"
 progress:
   total_phases: 10
   completed_phases: 8
-  total_plans: 16
-  completed_plans: 16
+  total_plans: 18
+  completed_plans: 17
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Autonomous task orchestration -- registered commands run on schedule or on file changes, with the right context and secrets, without human intervention unless something fails.
-**Current focus:** Phase 08 — command-chaining
+**Current focus:** Phase 09 — daemon-and-systemd
 
 ## Current Position
 
-Phase: 9
-Plan: Not started
+Phase: 09 (daemon-and-systemd) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -62,6 +62,7 @@ Plan: Not started
 | Phase 07 P02 | 3min | 2 tasks | 2 files |
 | Phase 08 P01 | 3min | 2 tasks | 7 files |
 | Phase 08 P02 | 2min | 2 tasks | 2 files |
+| Phase 09 P01 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -98,6 +99,8 @@ Recent decisions affecting current work:
 - [Phase 08]: detect_cycle walks from to_name following chain_next to find from_name for cycle detection
 - [Phase 08]: Direct SQL for clearing chain_next NULL (update_command filters None)
 - [Phase 08]: Exec dispatches to execute_chain when chain_next set, preserving single-command path
+- [Phase 09]: Fixed systemd user unit path instead of platformdirs per D-01
+- [Phase 09]: loginctl enable-linger uses check=False for environments without loginctl
 
 ### Pending Todos
 
@@ -109,6 +112,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T20:31:09.886Z
-Stopped at: Completed 08-02-PLAN.md
+Last session: 2026-03-24T20:54:59.326Z
+Stopped at: Completed 09-01-PLAN.md
 Resume file: None

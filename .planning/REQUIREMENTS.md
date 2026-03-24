@@ -48,7 +48,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **WATCH-03**: Watchers have self-trigger guards (ignore changes made by the triggered command itself)
 - [x] **WATCH-04**: Watchers support time-window constraints (e.g., only trigger between 9am-5pm)
 - [x] **WATCH-05**: Watchers support ignore patterns (editor temp files, .git, etc.)
-- [ ] **WATCH-06**: Watcher daemon runs as a systemd service that survives reboots
+- [x] **WATCH-06**: Watcher daemon runs as a systemd service that survives reboots
 
 ### Chaining
 
@@ -69,11 +69,11 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Infrastructure
 
 - [x] **INFRA-01**: Navigator installs globally via pip/uv (`navigator` CLI on PATH)
-- [ ] **INFRA-02**: systemd user services for watcher daemon and future bot listener
+- [x] **INFRA-02**: systemd user services for watcher daemon and future bot listener
 - [ ] **INFRA-03**: `navigator doctor` verifies crontab entries, paths, permissions, and service health
 - [ ] **INFRA-04**: `navigator --output json` provides machine-readable output for Claude Code agents
 - [x] **INFRA-05**: Configuration file at `~/.config/navigator/config.toml`
-- [ ] **INFRA-06**: `navigator install-service` generates and installs systemd unit files
+- [x] **INFRA-06**: `navigator install-service` generates and installs systemd unit files
 - [x] **INFRA-07**: Absolute path resolution at registration time (prevents stale crontab refs after reinstall)
 
 ## v2 Requirements
@@ -147,7 +147,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WATCH-03 | Phase 6 | Complete |
 | WATCH-04 | Phase 6 | Complete |
 | WATCH-05 | Phase 6 | Complete |
-| WATCH-06 | Phase 9 | Pending |
+| WATCH-06 | Phase 9 | Complete |
 | CHAIN-01 | Phase 8 | Complete |
 | CHAIN-02 | Phase 8 | Complete |
 | CHAIN-03 | Phase 8 | Complete |
@@ -159,11 +159,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NS-03 | Phase 7 | Complete |
 | NS-04 | Phase 7 | Complete |
 | INFRA-01 | Phase 1 | Complete |
-| INFRA-02 | Phase 9 | Pending |
+| INFRA-02 | Phase 9 | Complete |
 | INFRA-03 | Phase 10 | Pending |
 | INFRA-04 | Phase 10 | Pending |
 | INFRA-05 | Phase 1 | Complete |
-| INFRA-06 | Phase 9 | Pending |
+| INFRA-06 | Phase 9 | Complete |
 | INFRA-07 | Phase 1 | Complete |
 
 **Coverage:**

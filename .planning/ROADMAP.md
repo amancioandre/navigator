@@ -153,7 +153,7 @@ Plans:
   4. Daemon survives reboots and resumes watching registered paths
 **Plans**: 2 plans
 Plans:
-- [ ] 09-01-PLAN.md — Service module with systemd unit generation, install/uninstall, systemctl wrapper, and unit tests
+- [x] 09-01-PLAN.md — Service module with systemd unit generation, install/uninstall, systemctl wrapper, and unit tests
 - [ ] 09-02-PLAN.md — Wire daemon, install-service, uninstall-service, service CLI commands with integration tests
 
 ### Phase 10: Operational Polish
