@@ -843,9 +843,154 @@ def watch(
 
 
 @app.command()
-def chain() -> None:
+def chain(
+    command: Annotated[
+        str, typer.Argument(help="Command name (supports namespace:command)")
+    ],
+    next_cmd: Annotated[
+        str | None,
+        typer.Option("--next", help="Next command to chain (supports namespace:command)"),
+    ] = None,
+    show: Annotated[
+        bool,
+        typer.Option("--show", help="Show the chain starting from this command"),
+    ] = False,
+    remove: Annotated[
+        bool,
+        typer.Option("--remove", help="Remove chain link from this command"),
+    ] = False,
+    on_failure: Annotated[
+        str | None,
+        typer.Option("--on-failure", help="Failure mode: 'stop' (default) or 'continue'"),
+    ] = None,
+) -> None:
     """Chain commands together."""
-    typer.echo("chain: not yet implemented")
+    from datetime import UTC, datetime
+
+    from navigator.config import load_config
+    from navigator.db import get_command_by_name, get_connection, init_db, update_command
+    from navigator.namespace import parse_qualified_name
+
+    # Validate flags: at least one mode required
+    if next_cmd is None and not show and not remove:
+        console.print(
+            "[yellow]Use --next to link, --show to display, "
+            "or --remove to unlink.[/yellow]"
+        )
+        raise typer.Exit(code=1)
+
+    # Validate mutual exclusion
+    if next_cmd is not None and (show or remove):
+        console.print("[red]Cannot combine --next with --show or --remove.[/red]")
+        raise typer.Exit(code=1)
+    if show and remove:
+        console.print("[red]Cannot combine --show with --remove.[/red]")
+        raise typer.Exit(code=1)
+
+    # Parse command name
+    try:
+        _parsed_ns, bare_name = parse_qualified_name(command)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+
+        # Look up the source command
+        cmd = get_command_by_name(conn, bare_name)
+        if cmd is None:
+            console.print(f"[red]Command '{bare_name}' not found.[/red]")
+            raise typer.Exit(code=1)
+
+        # --- --show mode ---
+        if show:
+            from navigator.chainer import walk_chain
+
+            try:
+                chain_cmds = walk_chain(conn, bare_name, config.max_chain_depth)
+            except ValueError as exc:
+                console.print(f"[red]{exc}[/red]")
+                raise typer.Exit(code=1) from None
+
+            parts: list[str] = []
+            for c in chain_cmds:
+                label = c.name
+                if c.on_failure_continue:
+                    label += " [dim](continue on failure)[/dim]"
+                parts.append(label)
+
+            console.print(" -> ".join(parts))
+            return
+
+        # --- --remove mode ---
+        if remove:
+            if cmd.chain_next is None:
+                console.print(
+                    f"[yellow]Command '{bare_name}' has no chain link.[/yellow]"
+                )
+                return
+
+            now = datetime.now(UTC).isoformat()
+            with conn:
+                conn.execute(
+                    "UPDATE commands SET chain_next = NULL, on_failure_continue = 0, "
+                    "updated_at = ? WHERE name = ?",
+                    (now, bare_name),
+                )
+            console.print(
+                f"[green]Removed chain link from '{bare_name}'[/green]"
+            )
+            return
+
+        # --- --next mode (link) ---
+        if next_cmd is not None:
+            # Validate on_failure value
+            if on_failure is not None and on_failure not in ("stop", "continue"):
+                console.print(
+                    f"[red]Invalid --on-failure value '{on_failure}'. "
+                    "Use 'stop' or 'continue'.[/red]"
+                )
+                raise typer.Exit(code=1)
+
+            # Parse target command
+            try:
+                _next_ns, next_bare = parse_qualified_name(next_cmd)
+            except ValueError as exc:
+                console.print(f"[red]{exc}[/red]")
+                raise typer.Exit(code=1) from None
+
+            # Validate target exists
+            target = get_command_by_name(conn, next_bare)
+            if target is None:
+                console.print(f"[red]Command '{next_bare}' not found.[/red]")
+                raise typer.Exit(code=1)
+
+            # Cycle detection
+            from navigator.chainer import detect_cycle
+
+            if detect_cycle(conn, bare_name, next_bare):
+                console.print(
+                    f"[red]Cycle detected: chaining '{bare_name}' -> "
+                    f"'{next_cmd}' would create a loop.[/red]"
+                )
+                raise typer.Exit(code=1)
+
+            on_failure_continue = on_failure == "continue"
+            update_command(
+                conn,
+                bare_name,
+                chain_next=next_cmd,
+                on_failure_continue=on_failure_continue,
+            )
+            console.print(
+                f"[green]Chained '{command}' -> '{next_cmd}'[/green]"
+            )
+            return
+    finally:
+        conn.close()
 
 
 @app.command()
