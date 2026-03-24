@@ -180,6 +180,163 @@ def show(
         conn.close()
 
 
+@app.command()
+def update(
+    name: Annotated[
+        str, typer.Argument(help="Command name to update")
+    ],
+    prompt: Annotated[
+        str | None,
+        typer.Option("--prompt", "-p", help="New prompt"),
+    ] = None,
+    environment: Annotated[
+        str | None,
+        typer.Option("--environment", "-e", help="New working directory"),
+    ] = None,
+    secrets: Annotated[
+        str | None,
+        typer.Option("--secrets", "-s", help="New secrets path"),
+    ] = None,
+    allowed_tools: Annotated[
+        str | None,
+        typer.Option("--allowed-tools", "-t", help="New comma-separated tools"),
+    ] = None,
+) -> None:
+    """Update fields of a registered command."""
+    from navigator.config import load_config, resolve_path
+    from navigator.db import get_connection, init_db, update_command
+
+    fields: dict[str, object] = {}
+    if prompt is not None:
+        fields["prompt"] = prompt
+    if environment is not None:
+        fields["environment"] = str(resolve_path(environment))
+    if secrets is not None:
+        fields["secrets"] = str(resolve_path(secrets))
+    if allowed_tools is not None:
+        fields["allowed_tools"] = [
+            t.strip() for t in allowed_tools.split(",")
+        ]
+
+    if not fields:
+        console.print(
+            "[yellow]No fields to update. "
+            "Use --prompt, --environment, --secrets, "
+            "or --allowed-tools.[/yellow]"
+        )
+        return
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        rows = update_command(conn, name, **fields)
+        if rows == 0:
+            console.print(f"[red]Command '{name}' not found.[/red]")
+            raise typer.Exit(code=1)
+        console.print(f"[green]Updated command '{name}'[/green]")
+    finally:
+        conn.close()
+
+
+@app.command()
+def delete(
+    name: Annotated[
+        str, typer.Argument(help="Command name to delete")
+    ],
+    force: Annotated[
+        bool,
+        typer.Option("--force", "-f", help="Skip confirmation"),
+    ] = False,
+) -> None:
+    """Delete a registered command."""
+    if not force:
+        typer.confirm(f"Delete command '{name}'?", abort=True)
+
+    from navigator.config import load_config
+    from navigator.db import delete_command, get_connection, init_db
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        rows = delete_command(conn, name)
+        if rows == 0:
+            console.print(f"[red]Command '{name}' not found.[/red]")
+            raise typer.Exit(code=1)
+        console.print(f"[green]Deleted command '{name}'[/green]")
+    finally:
+        conn.close()
+
+
+@app.command()
+def pause(
+    name: Annotated[
+        str, typer.Argument(help="Command name to pause")
+    ],
+) -> None:
+    """Pause a registered command."""
+    from navigator.config import load_config
+    from navigator.db import (
+        get_command_by_name,
+        get_connection,
+        init_db,
+        update_command,
+    )
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        cmd = get_command_by_name(conn, name)
+        if cmd is None:
+            console.print(f"[red]Command '{name}' not found.[/red]")
+            raise typer.Exit(code=1)
+        if cmd.status == "paused":
+            console.print(
+                f"[yellow]Command '{name}' is already paused.[/yellow]"
+            )
+            return
+        update_command(conn, name, status="paused")
+        console.print(f"[green]Paused command '{name}'[/green]")
+    finally:
+        conn.close()
+
+
+@app.command()
+def resume(
+    name: Annotated[
+        str, typer.Argument(help="Command name to resume")
+    ],
+) -> None:
+    """Resume a paused command."""
+    from navigator.config import load_config
+    from navigator.db import (
+        get_command_by_name,
+        get_connection,
+        init_db,
+        update_command,
+    )
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        cmd = get_command_by_name(conn, name)
+        if cmd is None:
+            console.print(f"[red]Command '{name}' not found.[/red]")
+            raise typer.Exit(code=1)
+        if cmd.status == "active":
+            console.print(
+                f"[yellow]Command '{name}' is already active.[/yellow]"
+            )
+            return
+        update_command(conn, name, status="active")
+        console.print(f"[green]Resumed command '{name}'[/green]")
+    finally:
+        conn.close()
+
+
 @app.command(name="exec")
 def exec_command() -> None:
     """Execute a registered command."""
