@@ -180,6 +180,34 @@ class TestTransactionSafety:
         assert result.prompt == "test"
 
 
+class TestChainFieldsRoundTrip:
+    """Tests for chain_next and on_failure_continue round-trip through insert/read."""
+
+    def test_chain_next_round_trip(self, db_conn):
+        cmd = Command(
+            name="chain-cmd",
+            prompt="test",
+            environment=Path("/tmp"),
+            chain_next="next-cmd",
+            on_failure_continue=True,
+        )
+        insert_command(db_conn, cmd)
+        retrieved = get_command_by_name(db_conn, "chain-cmd")
+        assert retrieved.chain_next == "next-cmd"
+        assert retrieved.on_failure_continue is True
+
+    def test_chain_next_null_round_trip(self, db_conn):
+        cmd = Command(
+            name="no-chain-cmd",
+            prompt="test",
+            environment=Path("/tmp"),
+        )
+        insert_command(db_conn, cmd)
+        retrieved = get_command_by_name(db_conn, "no-chain-cmd")
+        assert retrieved.chain_next is None
+        assert retrieved.on_failure_continue is False
+
+
 class TestAllowedToolsRoundTrip:
     """Tests for JSON serialization of allowed_tools."""
 
