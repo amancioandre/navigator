@@ -52,7 +52,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 02-01-PLAN.md — Command model, SQLite database layer, and data layer tests
-- [ ] 02-02-PLAN.md — All 7 CLI subcommands (register, list, show, update, delete, pause, resume) and CLI integration tests
+- [x] 02-02-PLAN.md — All 7 CLI subcommands (register, list, show, update, delete, pause, resume) and CLI integration tests
 
 ### Phase 3: Execution Core
 **Goal**: Registered commands run as Claude Code subprocesses with proper secrets and environment isolation

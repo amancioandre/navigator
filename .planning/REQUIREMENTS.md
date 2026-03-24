@@ -10,13 +10,13 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Registry
 
 - [x] **REG-01**: User can register a command with a name, prompt, environment path, secrets path, and allowed tools
-- [ ] **REG-02**: User can list all registered commands with filtering by namespace
-- [ ] **REG-03**: User can show details of a specific registered command
-- [ ] **REG-04**: User can update any field of a registered command
-- [ ] **REG-05**: User can delete a registered command (cleans up crontab entry and watchers)
-- [ ] **REG-06**: User can pause a registered command (disables scheduling/watching without deleting)
-- [ ] **REG-07**: User can resume a paused command
-- [ ] **REG-08**: User can list commands sorted by created date for housekeeping
+- [x] **REG-02**: User can list all registered commands with filtering by namespace
+- [x] **REG-03**: User can show details of a specific registered command
+- [x] **REG-04**: User can update any field of a registered command
+- [x] **REG-05**: User can delete a registered command (cleans up crontab entry and watchers)
+- [x] **REG-06**: User can pause a registered command (disables scheduling/watching without deleting)
+- [x] **REG-07**: User can resume a paused command
+- [x] **REG-08**: User can list commands sorted by created date for housekeeping
 - [ ] **REG-09**: User can dry-run a command to see what would execute without running it
 - [x] **REG-10**: Registry persists in SQLite with crash-safe atomic transactions
 
@@ -118,13 +118,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | REG-01 | Phase 2 | Complete |
-| REG-02 | Phase 2 | Pending |
-| REG-03 | Phase 2 | Pending |
-| REG-04 | Phase 2 | Pending |
-| REG-05 | Phase 2 | Pending |
-| REG-06 | Phase 2 | Pending |
-| REG-07 | Phase 2 | Pending |
-| REG-08 | Phase 2 | Pending |
+| REG-02 | Phase 2 | Complete |
+| REG-03 | Phase 2 | Complete |
+| REG-04 | Phase 2 | Complete |
+| REG-05 | Phase 2 | Complete |
+| REG-06 | Phase 2 | Complete |
+| REG-07 | Phase 2 | Complete |
+| REG-08 | Phase 2 | Complete |
 | REG-09 | Phase 10 | Pending |
 | REG-10 | Phase 2 | Complete |
 | EXEC-01 | Phase 3 | Pending |
