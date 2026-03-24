@@ -37,7 +37,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 2 plans
 Plans:
 - [x] 01-01-PLAN.md — Package skeleton, CLI entry point with 8 subcommand stubs, test infrastructure
-- [ ] 01-02-PLAN.md — Config system with TOML persistence and absolute path resolution
+- [x] 01-02-PLAN.md — Config system with TOML persistence and absolute path resolution
 
 ### Phase 2: Command Registry
 **Goal**: Users can register, browse, and manage commands through the CLI

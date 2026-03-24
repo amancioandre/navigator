@@ -72,9 +72,9 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **INFRA-02**: systemd user services for watcher daemon and future bot listener
 - [ ] **INFRA-03**: `navigator doctor` verifies crontab entries, paths, permissions, and service health
 - [ ] **INFRA-04**: `navigator --output json` provides machine-readable output for Claude Code agents
-- [ ] **INFRA-05**: Configuration file at `~/.config/navigator/config.toml`
+- [x] **INFRA-05**: Configuration file at `~/.config/navigator/config.toml`
 - [ ] **INFRA-06**: `navigator install-service` generates and installs systemd unit files
-- [ ] **INFRA-07**: Absolute path resolution at registration time (prevents stale crontab refs after reinstall)
+- [x] **INFRA-07**: Absolute path resolution at registration time (prevents stale crontab refs after reinstall)
 
 ## v2 Requirements
 
@@ -162,9 +162,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-02 | Phase 9 | Pending |
 | INFRA-03 | Phase 10 | Pending |
 | INFRA-04 | Phase 10 | Pending |
-| INFRA-05 | Phase 1 | Pending |
+| INFRA-05 | Phase 1 | Complete |
 | INFRA-06 | Phase 9 | Pending |
-| INFRA-07 | Phase 1 | Pending |
+| INFRA-07 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 48 total
