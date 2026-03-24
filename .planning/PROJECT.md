@@ -32,7 +32,7 @@ Autonomous task orchestration — registered commands run on schedule or on file
 ### Active
 - [ ] Push notifications on failure via messaging bot
 - [ ] Remote CLI via private messaging bot (Telegram/Discord) — full CRUD, long-polling, never exposed publicly
-- [ ] Survives reboots — runs as a systemd service (watcher daemon + bot listener)
+- ✓ Survives reboots — systemd user service with auto-restart and linger support — Phase 9
 - [ ] Globally installed via pip (`pip install navigator`, `navigator` CLI command)
 - [ ] Claude Code can understand and invoke the CLI API from other sessions
 - [ ] Exposes skills usable from Claude Code sessions
@@ -90,4 +90,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after Phase 8 completion*
+*Last updated: 2026-03-24 after Phase 9 completion*
