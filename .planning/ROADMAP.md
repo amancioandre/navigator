@@ -108,7 +108,10 @@ Plans:
   3. Changes made by the triggered command itself do not re-trigger the watcher
   4. Watchers support time-window constraints (e.g., only trigger between 9am-5pm)
   5. Watchers support ignore patterns for editor temp files, .git, etc.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 06-01-PLAN.md — Watcher model, DB schema + CRUD, event handler (debounce, guard, time window), watchdog dependency
+- [ ] 06-02-PLAN.md — Wire watch CLI command (--path, --pattern, --remove, --list, --start daemon) with integration tests
 
 ### Phase 7: Namespacing
 **Goal**: Commands are organized by project with isolated secrets and cross-namespace visibility
@@ -167,7 +170,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Execution Core | 0/2 | Planning | - |
 | 4. Execution Hardening | 0/2 | Planning | - |
 | 5. Cron Scheduling | 0/2 | Planning | - |
-| 6. File Watching | 0/TBD | Not started | - |
+| 6. File Watching | 0/2 | Planning | - |
 | 7. Namespacing | 0/TBD | Not started | - |
 | 8. Command Chaining | 0/TBD | Not started | - |
 | 9. Daemon and systemd | 0/TBD | Not started | - |
