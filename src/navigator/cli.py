@@ -177,20 +177,39 @@ def register(
         str | None,
         typer.Option("--allowed-tools", "-t", help="Comma-separated tools"),
     ] = None,
+    namespace: Annotated[
+        str | None,
+        typer.Option("--namespace", "-n", help="Namespace for the command"),
+    ] = None,
 ) -> None:
     """Register a new command."""
     from navigator.config import load_config, resolve_path
-    from navigator.db import get_connection, init_db, insert_command
+    from navigator.db import get_connection, get_namespace_by_name, init_db, insert_command
     from navigator.models import Command
+    from navigator.namespace import namespace_secrets_path
 
+    ns = namespace or "default"
     config = load_config()
     env_path = resolve_path(environment) if environment else resolve_path(Path.cwd())
-    sec_path = resolve_path(secrets) if secrets else None
     tools = [t.strip() for t in allowed_tools.split(",")] if allowed_tools else []
 
     conn = get_connection(config.db_path)
     try:
         init_db(conn)
+
+        # Validate namespace exists
+        if get_namespace_by_name(conn, ns) is None:
+            console.print(f"[red]Namespace '{ns}' not found.[/red]")
+            raise typer.Exit(code=1)
+
+        # Auto-resolve secrets path for non-default namespaces when not explicitly provided
+        if secrets:
+            sec_path = resolve_path(secrets)
+        elif ns != "default":
+            sec_path = namespace_secrets_path(ns)
+        else:
+            sec_path = None
+
         try:
             cmd = Command(
                 name=name,
@@ -198,6 +217,7 @@ def register(
                 environment=env_path,
                 secrets=sec_path,
                 allowed_tools=tools,
+                namespace=ns,
             )
         except Exception:
             console.print(f"[red]Invalid command name '{name}'[/red]")
@@ -267,14 +287,28 @@ def show(
     """Show full details of a registered command."""
     from navigator.config import load_config
     from navigator.db import get_command_by_name, get_connection, init_db
+    from navigator.namespace import parse_qualified_name
+
+    try:
+        parsed_ns, bare_name = parse_qualified_name(name)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
 
     config = load_config()
     conn = get_connection(config.db_path)
     try:
         init_db(conn)
-        cmd = get_command_by_name(conn, name)
+        cmd = get_command_by_name(conn, bare_name)
         if cmd is None:
-            console.print(f"[red]Command '{name}' not found.[/red]")
+            console.print(f"[red]Command '{bare_name}' not found.[/red]")
+            raise typer.Exit(code=1)
+
+        if cmd.namespace != parsed_ns:
+            console.print(
+                f"[red]Command '{bare_name}' is in namespace '{cmd.namespace}', "
+                f"not '{parsed_ns}'.[/red]"
+            )
             raise typer.Exit(code=1)
 
         table = Table(title=f"Command: {cmd.name}", show_header=False)
@@ -473,20 +507,34 @@ def exec_command(
     from navigator.config import load_config
     from navigator.db import get_command_by_name, get_connection, init_db
     from navigator.executor import execute_command
+    from navigator.namespace import parse_qualified_name
+
+    try:
+        parsed_ns, bare_name = parse_qualified_name(name)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
 
     config = load_config()
     conn = get_connection(config.db_path)
     try:
         init_db(conn)
-        cmd = get_command_by_name(conn, name)
+        cmd = get_command_by_name(conn, bare_name)
         if cmd is None:
-            console.print(f"[red]Command '{name}' not found.[/red]")
+            console.print(f"[red]Command '{bare_name}' not found.[/red]")
+            raise typer.Exit(code=1)
+
+        if cmd.namespace != parsed_ns:
+            console.print(
+                f"[red]Command '{bare_name}' is in namespace '{cmd.namespace}', "
+                f"not '{parsed_ns}'.[/red]"
+            )
             raise typer.Exit(code=1)
 
         if cmd.status == "paused":
             console.print(
-                f"[red]Command '{name}' is paused. "
-                f"Run `navigator resume {name}` first.[/red]"
+                f"[red]Command '{bare_name}' is paused. "
+                f"Run `navigator resume {bare_name}` first.[/red]"
             )
             raise typer.Exit(code=1)
 

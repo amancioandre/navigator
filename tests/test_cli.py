@@ -804,3 +804,94 @@ def test_namespace_delete_default_rejected(cli_runner, app, tmp_config_dir):
     result = cli_runner.invoke(app, ["namespace", "delete", "default"])
     assert result.exit_code == 1
     assert "Cannot delete" in result.output
+
+
+# === Phase 7 tests — qualified names and --namespace on register ===
+
+
+def test_register_with_namespace(cli_runner, app, tmp_config_dir):
+    """Register command with --namespace puts it in that namespace."""
+    cli_runner.invoke(app, ["namespace", "create", "myns"])
+    result = cli_runner.invoke(app, [
+        "register", "my-cmd", "--prompt", "do stuff", "--namespace", "myns",
+    ])
+    assert result.exit_code == 0
+    assert "Registered command" in result.output
+
+    # Verify it appears in namespace-filtered list
+    result = cli_runner.invoke(app, ["list", "--namespace", "myns"])
+    assert "my-cmd" in result.output
+
+
+def test_register_nonexistent_namespace(cli_runner, app, tmp_config_dir):
+    """Register with --namespace that doesn't exist exits 1."""
+    result = cli_runner.invoke(app, [
+        "register", "my-cmd", "--prompt", "do stuff", "--namespace", "nonexistent",
+    ])
+    assert result.exit_code == 1
+    assert "not found" in result.output
+
+
+def test_exec_qualified_name(cli_runner, app, tmp_config_dir, monkeypatch):
+    """Exec with qualified name myns:cmd-name resolves correctly."""
+    from navigator.executor import ExecutionResult
+
+    cli_runner.invoke(app, ["namespace", "create", "myns"])
+    cli_runner.invoke(app, [
+        "register", "my-cmd", "--prompt", "do stuff",
+        "--environment", "/tmp", "--namespace", "myns",
+    ])
+
+    mock_result = ExecutionResult(
+        command_name="my-cmd",
+        returncode=0,
+        stdout="Qualified exec output",
+        stderr="",
+        attempts=1,
+        duration=1.0,
+        timed_out=False,
+        log_path=None,
+    )
+    monkeypatch.setattr(
+        "navigator.executor.execute_command", lambda *a, **kw: mock_result
+    )
+
+    result = cli_runner.invoke(app, ["exec", "myns:my-cmd"])
+    assert result.exit_code == 0
+    assert "Qualified exec output" in result.output
+
+
+def test_exec_wrong_namespace(cli_runner, app, tmp_config_dir, monkeypatch):
+    """Exec with wrong namespace in qualified name exits 1."""
+    from navigator.executor import ExecutionResult
+
+    cli_runner.invoke(app, ["namespace", "create", "myns"])
+    cli_runner.invoke(app, [
+        "register", "my-cmd", "--prompt", "do stuff",
+        "--environment", "/tmp", "--namespace", "myns",
+    ])
+
+    monkeypatch.setattr(
+        "navigator.executor.execute_command",
+        lambda *a, **kw: ExecutionResult(
+            command_name="my-cmd", returncode=0, stdout="", stderr="",
+            attempts=1, duration=1.0, timed_out=False, log_path=None,
+        ),
+    )
+
+    result = cli_runner.invoke(app, ["exec", "other:my-cmd"])
+    assert result.exit_code == 1
+    assert "not 'other'" in result.output
+
+
+def test_show_qualified_name(cli_runner, app, tmp_config_dir):
+    """Show with qualified name myns:cmd-name works."""
+    cli_runner.invoke(app, ["namespace", "create", "myns"])
+    cli_runner.invoke(app, [
+        "register", "my-cmd", "--prompt", "do stuff",
+        "--environment", "/tmp", "--namespace", "myns",
+    ])
+    result = cli_runner.invoke(app, ["show", "myns:my-cmd"])
+    assert result.exit_code == 0
+    assert "my-cmd" in result.output
+    assert "do stuff" in result.output
