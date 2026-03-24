@@ -340,6 +340,14 @@ def resume(
 @app.command(name="exec")
 def exec_command(
     name: Annotated[str, typer.Argument(help="Command name to execute")],
+    timeout: Annotated[
+        int | None,
+        typer.Option("--timeout", help="Timeout in seconds (overrides config default)"),
+    ] = None,
+    retries: Annotated[
+        int | None,
+        typer.Option("--retries", help="Max retry attempts (overrides config default)"),
+    ] = None,
 ) -> None:
     """Execute a registered command."""
     from navigator.config import load_config
@@ -363,13 +371,26 @@ def exec_command(
             raise typer.Exit(code=1)
 
         try:
-            result = execute_command(cmd)
+            result = execute_command(
+                cmd, config, timeout_override=timeout, retries_override=retries
+            )
         except FileNotFoundError as e:
             console.print(f"[red]{e}[/red]")
             raise typer.Exit(code=1) from None
 
         if result.stdout:
             console.print(result.stdout)
+
+        if result.timed_out:
+            console.print(
+                f"[yellow]Command '{name}' timed out after "
+                f"{timeout or config.default_timeout}s[/yellow]"
+            )
+
+        if result.attempts > 1:
+            console.print(
+                f"[dim]Completed after {result.attempts} attempt(s)[/dim]"
+            )
 
         if result.returncode != 0:
             console.print(
@@ -379,6 +400,9 @@ def exec_command(
             if result.stderr:
                 console.print(f"[dim]{result.stderr}[/dim]")
             raise typer.Exit(code=result.returncode)
+
+        if result.log_path:
+            console.print(f"[dim]Log: {result.log_path}[/dim]")
     finally:
         conn.close()
 
@@ -402,9 +426,53 @@ def chain() -> None:
 
 
 @app.command()
-def logs() -> None:
+def logs(
+    name: Annotated[str, typer.Argument(help="Command name")],
+    count: Annotated[
+        int, typer.Option("--count", "-n", help="Number of log entries to show")
+    ] = 10,
+    tail: Annotated[
+        bool, typer.Option("--tail", help="Show full content of last log")
+    ] = False,
+) -> None:
     """View execution logs."""
-    typer.echo("logs: not yet implemented")
+    from navigator.config import load_config
+    from navigator.execution_logger import list_execution_logs, read_log_content
+
+    config = load_config()
+    entries = list_execution_logs(config.log_dir, name, count=count)
+
+    if not entries:
+        console.print(f"[dim]No execution logs for '{name}'[/dim]")
+        return
+
+    if tail:
+        content = read_log_content(entries[0].path)
+        console.print(content)
+        return
+
+    table = Table(title=f"Execution Logs: {name}")
+    table.add_column("Timestamp", style="dim")
+    table.add_column("Exit Code")
+    table.add_column("Duration", style="dim")
+    table.add_column("Attempt", style="dim")
+
+    for entry in entries:
+        if entry.exit_code == 0:
+            code_style = "green"
+        elif entry.exit_code == 124:
+            code_style = "yellow"
+        else:
+            code_style = "red"
+
+        table.add_row(
+            entry.timestamp,
+            f"[{code_style}]{entry.exit_code}[/{code_style}]",
+            entry.duration,
+            str(entry.attempt),
+        )
+
+    console.print(table)
 
 
 @app.command()

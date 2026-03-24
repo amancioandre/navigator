@@ -284,21 +284,27 @@ def test_exec_paused_exit_code(cli_runner, app, tmp_config_dir):
 
 def test_exec_active_command(cli_runner, app, tmp_config_dir, monkeypatch):
     """Exec active command calls execute_command and prints stdout."""
-    import subprocess
+    from pathlib import Path
+
+    from navigator.executor import ExecutionResult
 
     cli_runner.invoke(app, [
         "register", "my-cmd", "--prompt", "do stuff",
         "--environment", "/tmp",
     ])
 
-    mock_result = subprocess.CompletedProcess(
-        args=["claude"], returncode=0, stdout="Success output", stderr=""
+    mock_result = ExecutionResult(
+        command_name="my-cmd",
+        returncode=0,
+        stdout="Success output",
+        stderr="",
+        attempts=1,
+        duration=1.5,
+        timed_out=False,
+        log_path=Path("/tmp/logs/my-cmd/test.log"),
     )
     monkeypatch.setattr(
-        "navigator.executor.subprocess.run", lambda *a, **kw: mock_result
-    )
-    monkeypatch.setattr(
-        "navigator.executor.shutil.which", lambda cmd: "/usr/bin/claude"
+        "navigator.executor.execute_command", lambda *a, **kw: mock_result
     )
 
     result = cli_runner.invoke(app, ["exec", "my-cmd"])
@@ -308,21 +314,25 @@ def test_exec_active_command(cli_runner, app, tmp_config_dir, monkeypatch):
 
 def test_exec_command_nonzero_exit(cli_runner, app, tmp_config_dir, monkeypatch):
     """Exec command with nonzero exit reports exit code and stderr."""
-    import subprocess
+    from navigator.executor import ExecutionResult
 
     cli_runner.invoke(app, [
         "register", "fail-cmd", "--prompt", "do stuff",
         "--environment", "/tmp",
     ])
 
-    mock_result = subprocess.CompletedProcess(
-        args=["claude"], returncode=1, stdout="", stderr="Error details"
+    mock_result = ExecutionResult(
+        command_name="fail-cmd",
+        returncode=1,
+        stdout="",
+        stderr="Error details",
+        attempts=1,
+        duration=0.5,
+        timed_out=False,
+        log_path=None,
     )
     monkeypatch.setattr(
-        "navigator.executor.subprocess.run", lambda *a, **kw: mock_result
-    )
-    monkeypatch.setattr(
-        "navigator.executor.shutil.which", lambda cmd: "/usr/bin/claude"
+        "navigator.executor.execute_command", lambda *a, **kw: mock_result
     )
 
     result = cli_runner.invoke(app, ["exec", "fail-cmd"])
@@ -344,3 +354,179 @@ def test_exec_claude_not_found(cli_runner, app, tmp_config_dir, monkeypatch):
     result = cli_runner.invoke(app, ["exec", "my-cmd"])
     assert result.exit_code == 1
     assert "claude CLI not found" in result.output
+
+
+# === Phase 4 tests — exec flags (--timeout, --retries) ===
+
+
+class TestExecFlags:
+    """Tests for --timeout and --retries flags on exec command."""
+
+    def test_exec_with_timeout_flag(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """Exec --timeout passes timeout_override to execute_command."""
+        from navigator.executor import ExecutionResult
+
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "do stuff",
+            "--environment", "/tmp",
+        ])
+
+        captured_kwargs = {}
+
+        def mock_execute(cmd, config, timeout_override=None, retries_override=None):
+            captured_kwargs["timeout_override"] = timeout_override
+            captured_kwargs["retries_override"] = retries_override
+            return ExecutionResult(
+                command_name="test-cmd",
+                returncode=0,
+                stdout="ok",
+                stderr="",
+                attempts=1,
+                duration=1.0,
+                timed_out=False,
+                log_path=None,
+            )
+
+        monkeypatch.setattr("navigator.executor.execute_command", mock_execute)
+
+        result = cli_runner.invoke(app, ["exec", "test-cmd", "--timeout", "60"])
+        assert result.exit_code == 0
+        assert captured_kwargs["timeout_override"] == 60
+
+    def test_exec_with_retries_flag(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """Exec --retries passes retries_override to execute_command."""
+        from navigator.executor import ExecutionResult
+
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "do stuff",
+            "--environment", "/tmp",
+        ])
+
+        captured_kwargs = {}
+
+        def mock_execute(cmd, config, timeout_override=None, retries_override=None):
+            captured_kwargs["timeout_override"] = timeout_override
+            captured_kwargs["retries_override"] = retries_override
+            return ExecutionResult(
+                command_name="test-cmd",
+                returncode=0,
+                stdout="ok",
+                stderr="",
+                attempts=1,
+                duration=1.0,
+                timed_out=False,
+                log_path=None,
+            )
+
+        monkeypatch.setattr("navigator.executor.execute_command", mock_execute)
+
+        result = cli_runner.invoke(app, ["exec", "test-cmd", "--retries", "2"])
+        assert result.exit_code == 0
+        assert captured_kwargs["retries_override"] == 2
+
+    def test_exec_shows_attempt_count(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """Exec shows attempt count when more than 1 attempt."""
+        from navigator.executor import ExecutionResult
+
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "do stuff",
+            "--environment", "/tmp",
+        ])
+
+        mock_result = ExecutionResult(
+            command_name="test-cmd",
+            returncode=0,
+            stdout="ok",
+            stderr="",
+            attempts=3,
+            duration=5.0,
+            timed_out=False,
+            log_path=None,
+        )
+        monkeypatch.setattr(
+            "navigator.executor.execute_command", lambda *a, **kw: mock_result
+        )
+
+        result = cli_runner.invoke(app, ["exec", "test-cmd"])
+        assert result.exit_code == 0
+        assert "3 attempt(s)" in result.output
+
+
+# === Phase 4 tests — logs command ===
+
+
+class TestLogs:
+    """Tests for navigator logs command."""
+
+    def test_logs_no_entries(self, cli_runner, app, tmp_config_dir):
+        """Logs for nonexistent command shows 'No execution logs'."""
+        result = cli_runner.invoke(app, ["logs", "nonexistent"])
+        assert result.exit_code == 0
+        assert "No execution logs" in result.output
+
+    def test_logs_table_output(self, cli_runner, app, tmp_config_dir):
+        """Logs command shows table rows for existing log files."""
+        from navigator.config import load_config
+        from navigator.execution_logger import write_execution_log
+
+        config = load_config()
+        write_execution_log(
+            log_dir=config.log_dir,
+            command_name="test-cmd",
+            attempt=1,
+            returncode=0,
+            duration=2.5,
+            stdout="output",
+            stderr="",
+        )
+
+        result = cli_runner.invoke(app, ["logs", "test-cmd"])
+        assert result.exit_code == 0
+        assert "Execution Logs" in result.output
+        assert "2.50s" in result.output
+
+    def test_logs_tail_shows_content(self, cli_runner, app, tmp_config_dir):
+        """Logs --tail shows full content of last log."""
+        from navigator.config import load_config
+        from navigator.execution_logger import write_execution_log
+
+        config = load_config()
+        write_execution_log(
+            log_dir=config.log_dir,
+            command_name="test-cmd",
+            attempt=1,
+            returncode=0,
+            duration=1.0,
+            stdout="Detailed execution output here",
+            stderr="",
+        )
+
+        result = cli_runner.invoke(app, ["logs", "test-cmd", "--tail"])
+        assert result.exit_code == 0
+        assert "Detailed execution output here" in result.output
+
+    def test_logs_count_flag(self, cli_runner, app, tmp_config_dir):
+        """Logs -n limits entries shown."""
+        import time
+
+        from navigator.config import load_config
+        from navigator.execution_logger import write_execution_log
+
+        config = load_config()
+        for i in range(5):
+            write_execution_log(
+                log_dir=config.log_dir,
+                command_name="test-cmd",
+                attempt=1,
+                returncode=i,
+                duration=float(i),
+                stdout=f"output-{i}",
+                stderr="",
+            )
+            # Ensure distinct filenames (microsecond resolution)
+            time.sleep(0.01)
+
+        result = cli_runner.invoke(app, ["logs", "test-cmd", "-n", "2"])
+        assert result.exit_code == 0
+        # Table should exist
+        assert "Execution Logs" in result.output
