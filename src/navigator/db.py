@@ -10,7 +10,7 @@ import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
 
-from navigator.models import Command, CommandStatus
+from navigator.models import Command, CommandStatus, Watcher, WatcherStatus
 
 _CREATE_TABLE = """\
 CREATE TABLE IF NOT EXISTS commands (
@@ -34,6 +34,30 @@ _CREATE_INDEX_CREATED = (
     "CREATE INDEX IF NOT EXISTS idx_commands_created_at ON commands(created_at)"
 )
 
+_CREATE_WATCHERS_TABLE = """\
+CREATE TABLE IF NOT EXISTS watchers (
+    id TEXT PRIMARY KEY,
+    command_name TEXT NOT NULL,
+    watch_path TEXT NOT NULL,
+    patterns TEXT NOT NULL DEFAULT '["*"]',
+    ignore_patterns TEXT NOT NULL DEFAULT '[".git/**","*.swp","*.tmp","*~","__pycache__/**"]',
+    debounce_ms INTEGER NOT NULL DEFAULT 500,
+    active_hours TEXT,
+    recursive INTEGER NOT NULL DEFAULT 1,
+    status TEXT NOT NULL DEFAULT 'active',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY (command_name) REFERENCES commands(name) ON DELETE CASCADE
+)
+"""
+
+_CREATE_INDEX_WATCHERS_COMMAND = (
+    "CREATE INDEX IF NOT EXISTS idx_watchers_command ON watchers(command_name)"
+)
+_CREATE_INDEX_WATCHERS_STATUS = (
+    "CREATE INDEX IF NOT EXISTS idx_watchers_status ON watchers(status)"
+)
+
 
 def get_connection(db_path: Path) -> sqlite3.Connection:
     """Open a SQLite connection with WAL mode and foreign keys enabled.
@@ -54,11 +78,14 @@ def get_connection(db_path: Path) -> sqlite3.Connection:
 
 
 def init_db(conn: sqlite3.Connection) -> None:
-    """Create the commands table and indexes if they don't exist."""
+    """Create the commands and watchers tables and indexes if they don't exist."""
     with conn:
         conn.execute(_CREATE_TABLE)
         conn.execute(_CREATE_INDEX_NAMESPACE)
         conn.execute(_CREATE_INDEX_CREATED)
+        conn.execute(_CREATE_WATCHERS_TABLE)
+        conn.execute(_CREATE_INDEX_WATCHERS_COMMAND)
+        conn.execute(_CREATE_INDEX_WATCHERS_STATUS)
 
 
 def insert_command(conn: sqlite3.Connection, cmd: Command) -> None:
@@ -164,6 +191,94 @@ def row_to_command(row: sqlite3.Row) -> Command:
         allowed_tools=json.loads(row["allowed_tools"]),
         namespace=row["namespace"],
         status=CommandStatus(row["status"]),
+        created_at=row["created_at"],
+        updated_at=row["updated_at"],
+    )
+
+
+# --- Watcher CRUD ---
+
+
+def insert_watcher(conn: sqlite3.Connection, watcher: Watcher) -> None:
+    """Insert a watcher into the database atomically."""
+    with conn:
+        conn.execute(
+            """INSERT INTO watchers
+            (id, command_name, watch_path, patterns, ignore_patterns,
+             debounce_ms, active_hours, recursive, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (
+                watcher.id,
+                watcher.command_name,
+                str(watcher.watch_path),
+                json.dumps(watcher.patterns),
+                json.dumps(watcher.ignore_patterns),
+                watcher.debounce_ms,
+                watcher.active_hours,
+                1 if watcher.recursive else 0,
+                watcher.status,
+                watcher.created_at,
+                watcher.updated_at,
+            ),
+        )
+
+
+def get_watcher_by_id(conn: sqlite3.Connection, watcher_id: str) -> Watcher | None:
+    """Retrieve a watcher by id, or None if not found."""
+    row = conn.execute(
+        "SELECT * FROM watchers WHERE id = ?", (watcher_id,)
+    ).fetchone()
+    if row is None:
+        return None
+    return row_to_watcher(row)
+
+
+def get_watchers_for_command(
+    conn: sqlite3.Connection, command_name: str
+) -> list[Watcher]:
+    """Retrieve all watchers for a specific command."""
+    rows = conn.execute(
+        "SELECT * FROM watchers WHERE command_name = ?", (command_name,)
+    ).fetchall()
+    return [row_to_watcher(row) for row in rows]
+
+
+def get_active_watchers(conn: sqlite3.Connection) -> list[Watcher]:
+    """Retrieve all active watchers."""
+    rows = conn.execute(
+        "SELECT * FROM watchers WHERE status = ?", (WatcherStatus.ACTIVE,)
+    ).fetchall()
+    return [row_to_watcher(row) for row in rows]
+
+
+def delete_watcher(conn: sqlite3.Connection, watcher_id: str) -> int:
+    """Delete a watcher by id. Returns number of rows affected (0 or 1)."""
+    with conn:
+        cursor = conn.execute("DELETE FROM watchers WHERE id = ?", (watcher_id,))
+        return cursor.rowcount
+
+
+def delete_watchers_for_command(conn: sqlite3.Connection, command_name: str) -> int:
+    """Delete all watchers for a command. Returns number of rows affected."""
+    with conn:
+        cursor = conn.execute(
+            "DELETE FROM watchers WHERE command_name = ?", (command_name,)
+        )
+        return cursor.rowcount
+
+
+def row_to_watcher(row: sqlite3.Row) -> Watcher:
+    """Deserialize a database row into a Watcher model."""
+    return Watcher(
+        id=row["id"],
+        command_name=row["command_name"],
+        watch_path=Path(row["watch_path"]),
+        patterns=json.loads(row["patterns"]),
+        ignore_patterns=json.loads(row["ignore_patterns"]),
+        debounce_ms=row["debounce_ms"],
+        active_hours=row["active_hours"],
+        recursive=bool(row["recursive"]),
+        status=WatcherStatus(row["status"]),
         created_at=row["created_at"],
         updated_at=row["updated_at"],
     )
