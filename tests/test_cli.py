@@ -1030,3 +1030,120 @@ class TestChain:
         assert "Chain ID" in result.output
         assert "test-corr-id-1234" in result.output
         assert "2/2" in result.output
+
+
+# === Phase 9 tests — daemon and service CLI commands ===
+
+
+class TestDaemon:
+    """Tests for the daemon CLI command."""
+
+    def test_daemon_calls_run_daemon(self, cli_runner, app, monkeypatch):
+        """daemon command calls run_daemon with loaded config."""
+        from unittest.mock import MagicMock
+
+        mock_config = MagicMock()
+        mock_run_daemon = MagicMock()
+        monkeypatch.setattr("navigator.config.load_config", lambda: mock_config)
+        monkeypatch.setattr("navigator.watcher.run_daemon", mock_run_daemon)
+
+        result = cli_runner.invoke(app, ["daemon"])
+        assert result.exit_code == 0
+        mock_run_daemon.assert_called_once_with(mock_config)
+
+    def test_daemon_help(self, cli_runner, app):
+        """daemon --help exits 0 and mentions foreground."""
+        result = cli_runner.invoke(app, ["daemon", "--help"])
+        assert result.exit_code == 0
+        assert "foreground" in result.output
+
+
+class TestServiceCLI:
+    """Tests for install-service, uninstall-service, and service CLI commands."""
+
+    def test_install_service_success(self, cli_runner, app, monkeypatch):
+        """install-service prints path on success."""
+        monkeypatch.setattr(
+            "navigator.service.install_service",
+            lambda enable_linger: Path("/tmp/test.service"),
+        )
+        result = cli_runner.invoke(app, ["install-service"])
+        assert result.exit_code == 0
+        assert "installed" in result.output.lower()
+
+    def test_install_service_not_found(self, cli_runner, app, monkeypatch):
+        """install-service exits 1 when navigator binary not found."""
+        def _raise(enable_linger):
+            raise FileNotFoundError("navigator binary not found")
+
+        monkeypatch.setattr("navigator.service.install_service", _raise)
+        result = cli_runner.invoke(app, ["install-service"])
+        assert result.exit_code == 1
+        assert "not found" in result.output.lower()
+
+    def test_install_service_no_linger(self, cli_runner, app, monkeypatch):
+        """install-service --no-linger passes enable_linger=False."""
+        captured = {}
+
+        def _capture(enable_linger):
+            captured["enable_linger"] = enable_linger
+            return Path("/tmp/test.service")
+
+        monkeypatch.setattr("navigator.service.install_service", _capture)
+        result = cli_runner.invoke(app, ["install-service", "--no-linger"])
+        assert result.exit_code == 0
+        assert captured["enable_linger"] is False
+
+    def test_uninstall_service_existed(self, cli_runner, app, monkeypatch):
+        """uninstall-service shows 'uninstalled' when service existed."""
+        monkeypatch.setattr(
+            "navigator.service.uninstall_service", lambda: True
+        )
+        result = cli_runner.invoke(app, ["uninstall-service"])
+        assert result.exit_code == 0
+        assert "uninstalled" in result.output.lower()
+
+    def test_uninstall_service_not_installed(self, cli_runner, app, monkeypatch):
+        """uninstall-service shows 'not installed' when service did not exist."""
+        monkeypatch.setattr(
+            "navigator.service.uninstall_service", lambda: False
+        )
+        result = cli_runner.invoke(app, ["uninstall-service"])
+        assert result.exit_code == 0
+        assert "not installed" in result.output.lower()
+
+    def test_service_status(self, cli_runner, app, monkeypatch):
+        """service status prints stdout on success."""
+        from subprocess import CompletedProcess
+
+        monkeypatch.setattr(
+            "navigator.service.service_control",
+            lambda action: CompletedProcess(
+                args=[], returncode=0, stdout="active (running)\n", stderr=""
+            ),
+        )
+        result = cli_runner.invoke(app, ["service", "status"])
+        assert result.exit_code == 0
+        assert "active" in result.output
+
+    def test_service_invalid_action(self, cli_runner, app, monkeypatch):
+        """service with invalid action exits 1."""
+        def _raise(action):
+            raise ValueError("Invalid action")
+
+        monkeypatch.setattr("navigator.service.service_control", _raise)
+        result = cli_runner.invoke(app, ["service", "bogus"])
+        assert result.exit_code == 1
+
+    def test_service_failed_exit_code(self, cli_runner, app, monkeypatch):
+        """service propagates non-zero exit code from systemctl."""
+        from subprocess import CompletedProcess
+
+        monkeypatch.setattr(
+            "navigator.service.service_control",
+            lambda action: CompletedProcess(
+                args=[], returncode=3, stdout="", stderr="inactive"
+            ),
+        )
+        result = cli_runner.invoke(app, ["service", "status"])
+        assert result.exit_code == 3
