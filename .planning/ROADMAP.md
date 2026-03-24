@@ -49,7 +49,10 @@ Plans:
   3. User can pause and resume a command without deleting it
   4. User can list commands sorted by created date for housekeeping
   5. Registry data persists across restarts in SQLite with crash-safe atomic writes
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 02-01-PLAN.md — Command model, SQLite database layer, and data layer tests
+- [ ] 02-02-PLAN.md — All 7 CLI subcommands (register, list, show, update, delete, pause, resume) and CLI integration tests
 
 ### Phase 3: Execution Core
 **Goal**: Registered commands run as Claude Code subprocesses with proper secrets and environment isolation
@@ -150,8 +153,8 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Scaffold | 0/2 | Planning | - |
-| 2. Command Registry | 0/TBD | Not started | - |
+| 1. Project Scaffold | 2/2 | Complete | 2026-03-24 |
+| 2. Command Registry | 0/2 | Planning | - |
 | 3. Execution Core | 0/TBD | Not started | - |
 | 4. Execution Hardening | 0/TBD | Not started | - |
 | 5. Cron Scheduling | 0/TBD | Not started | - |
