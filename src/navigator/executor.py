@@ -71,12 +71,16 @@ if threading.current_thread() is threading.main_thread():
     signal.signal(signal.SIGINT, _signal_handler)
 
 
-def build_clean_env(secrets: dict[str, str] | None = None) -> dict[str, str]:
+def build_clean_env(
+    secrets: dict[str, str] | None = None,
+    extra_env: dict[str, str] | None = None,
+) -> dict[str, str]:
     """Build a clean environment dict from whitelisted parent vars plus secrets.
 
     Only PATH, HOME, LANG, TERM, and SHELL are copied from the parent
     process environment. All other parent variables are excluded.
     Secrets (if provided) are merged in after the whitelist.
+    Extra env vars (if provided) are merged last, for chain correlation IDs etc.
     """
     env: dict[str, str] = {}
 
@@ -87,6 +91,10 @@ def build_clean_env(secrets: dict[str, str] | None = None) -> dict[str, str]:
 
     if secrets:
         for key, value in secrets.items():
+            env[key] = value
+
+    if extra_env:
+        for key, value in extra_env.items():
             env[key] = value
 
     return env
@@ -166,6 +174,7 @@ def execute_command(
     config: NavigatorConfig,
     timeout_override: int | None = None,
     retries_override: int | None = None,
+    extra_env: dict[str, str] | None = None,
 ) -> ExecutionResult:
     """Execute a registered command as a Claude Code subprocess.
 
@@ -190,7 +199,7 @@ def execute_command(
     from navigator.secrets import load_secrets
 
     secrets = load_secrets(cmd.secrets)
-    env = build_clean_env(secrets)
+    env = build_clean_env(secrets, extra_env=extra_env)
     args = build_command_args(cmd.prompt, cmd.allowed_tools)
 
     max_retries = retries_override if retries_override is not None else config.default_retry_count

@@ -96,8 +96,8 @@ class TestDetectCycle:
         insert_command(chain_db, _make_cmd("a", chain_next="b"))
         insert_command(chain_db, _make_cmd("b", chain_next="c"))
         insert_command(chain_db, _make_cmd("c"))
-        # Adding c->a would create a cycle
-        assert detect_cycle(chain_db, "a", "c") is True
+        # Adding c->a would create a cycle (a->b->c->a)
+        assert detect_cycle(chain_db, "c", "a") is True
 
     def test_valid_non_cyclic(self, chain_db):
         insert_command(chain_db, _make_cmd("x", chain_next="y"))
