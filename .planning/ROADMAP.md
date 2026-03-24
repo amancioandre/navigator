@@ -80,7 +80,7 @@ Plans:
   5. Child processes are tracked by PID and cleaned up via process groups (no zombies)
 **Plans**: 2 plans
 Plans:
-- [ ] 04-01-PLAN.md — Execution engine hardening: Popen with process groups, retry, timeout, execution logging module
+- [x] 04-01-PLAN.md — Execution engine hardening: Popen with process groups, retry, timeout, execution logging module
 - [ ] 04-02-PLAN.md — CLI wiring: --timeout/--retries flags on exec, navigator logs command
 
 ### Phase 5: Cron Scheduling
