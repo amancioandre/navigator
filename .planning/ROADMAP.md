@@ -154,7 +154,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 09-01-PLAN.md — Service module with systemd unit generation, install/uninstall, systemctl wrapper, and unit tests
-- [ ] 09-02-PLAN.md — Wire daemon, install-service, uninstall-service, service CLI commands with integration tests
+- [x] 09-02-PLAN.md — Wire daemon, install-service, uninstall-service, service CLI commands with integration tests
 
 ### Phase 10: Operational Polish
 **Goal**: Navigator is introspectable by humans and Claude Code agents with health checks and machine-readable output
