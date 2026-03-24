@@ -408,9 +408,118 @@ def exec_command(
 
 
 @app.command()
-def schedule() -> None:
+def schedule(
+    command: Annotated[
+        str | None,
+        typer.Argument(help="Command name to schedule"),
+    ] = None,
+    cron_expr: Annotated[
+        str | None,
+        typer.Option("--cron", help='Cron expression (e.g., "*/5 * * * *")'),
+    ] = None,
+    remove: Annotated[
+        bool,
+        typer.Option("--remove", help="Remove schedule for command"),
+    ] = False,
+    list_all: Annotated[
+        bool,
+        typer.Option("--list", help="List all scheduled commands"),
+    ] = False,
+) -> None:
     """Schedule a command with a cron expression."""
-    typer.echo("schedule: not yet implemented")
+    from navigator.config import get_data_dir
+
+    # --list mode: show all scheduled commands
+    if list_all:
+        from navigator.scheduler import CrontabManager
+
+        manager = CrontabManager(lock_path=get_data_dir() / "crontab.lock")
+        entries = manager.list_schedules()
+
+        if not entries:
+            console.print("[dim]No scheduled commands.[/dim]")
+            return
+
+        table = Table(title="Scheduled Commands")
+        table.add_column("Command", style="cyan")
+        table.add_column("Schedule", style="green")
+        table.add_column("Enabled", style="dim")
+
+        for entry in entries:
+            table.add_row(entry["command"], entry["schedule"], entry["enabled"])
+
+        console.print(table)
+        return
+
+    # Validation: command name required for non-list operations
+    if command is None:
+        console.print("[red]Command name required.[/red]")
+        raise typer.Exit(code=1)
+
+    if cron_expr and remove:
+        console.print("[red]Cannot use --cron and --remove together.[/red]")
+        raise typer.Exit(code=1)
+
+    if not cron_expr and not remove:
+        console.print(
+            "[red]Use --cron to schedule or --remove to unschedule.[/red]"
+        )
+        raise typer.Exit(code=1)
+
+    # Validate command exists and is active
+    from navigator.config import load_config
+    from navigator.db import get_command_by_name, get_connection, init_db
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        cmd = get_command_by_name(conn, command)
+        if cmd is None:
+            console.print(f"[red]Command '{command}' not found.[/red]")
+            raise typer.Exit(code=1)
+        if cmd.status == "paused":
+            console.print(
+                f"[red]Command '{command}' is paused. "
+                f"Run `navigator resume {command}` first.[/red]"
+            )
+            raise typer.Exit(code=1)
+    finally:
+        conn.close()
+
+    from navigator.scheduler import CrontabManager
+
+    manager = CrontabManager(lock_path=get_data_dir() / "crontab.lock")
+
+    # --cron mode: schedule command
+    if cron_expr:
+        try:
+            manager.schedule(command, cron_expr)
+        except ValueError as exc:
+            console.print(f"[red]{exc}[/red]")
+            raise typer.Exit(code=1) from None
+        except FileNotFoundError as exc:
+            console.print(f"[red]{exc}[/red]")
+            raise typer.Exit(code=1) from None
+        except TimeoutError as exc:
+            console.print(f"[red]{exc}[/red]")
+            raise typer.Exit(code=1) from None
+        console.print(
+            f"[green]Scheduled '{command}' with cron: {cron_expr}[/green]"
+        )
+        return
+
+    # --remove mode: unschedule command
+    if remove:
+        removed = manager.unschedule(command)
+        if removed:
+            console.print(
+                f"[green]Removed schedule for '{command}'[/green]"
+            )
+        else:
+            console.print(
+                f"[yellow]Command '{command}' was not scheduled.[/yellow]"
+            )
 
 
 @app.command()
