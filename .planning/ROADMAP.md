@@ -65,7 +65,7 @@ Plans:
   4. Subprocess runs in a clean environment (only declared variables) in the registered working directory
 **Plans**: 2 plans
 Plans:
-- [ ] 03-01-PLAN.md — Secrets module, executor module with environment isolation, and unit tests
+- [x] 03-01-PLAN.md — Secrets module, executor module with environment isolation, and unit tests
 - [ ] 03-02-PLAN.md — Wire exec CLI subcommand to executor with CLI integration tests
 
 ### Phase 4: Execution Hardening
