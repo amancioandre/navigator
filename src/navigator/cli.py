@@ -41,8 +41,15 @@ def main(
         bool | None,
         typer.Option("--version", callback=version_callback, is_eager=True),
     ] = None,
+    output: Annotated[
+        str | None,
+        typer.Option("--output", help="Output format: text or json"),
+    ] = None,
 ) -> None:
     """Autonomous task orchestrator for Claude Code sessions."""
+    import navigator.output as nav_output
+
+    nav_output.output_format = output or "text"
 
 
 # --- Namespace subcommands ---
@@ -94,6 +101,22 @@ def list_namespaces() -> None:
     try:
         init_db(conn)
         namespaces = get_all_namespaces(conn)
+
+        from navigator.output import is_json, json_response
+
+        if is_json():
+            ns_data = [
+                {
+                    "name": ns.name,
+                    "description": ns.description,
+                    "created_at": ns.created_at,
+                    "command_count": len(get_all_commands(conn, namespace=ns.name)),
+                }
+                for ns in namespaces
+            ]
+            typer.echo(json_response("ok", {"namespaces": ns_data}))
+            return
+
         if not namespaces:
             console.print("[dim]No namespaces found.[/dim]")
             return
@@ -255,6 +278,23 @@ def list_commands(
     try:
         init_db(conn)
         commands = get_all_commands(conn, namespace=namespace, sort_by_created=sort_date)
+
+        from navigator.output import is_json, json_response
+
+        if is_json():
+            cmd_data = [
+                {
+                    "name": c.name,
+                    "status": c.status,
+                    "namespace": c.namespace,
+                    "environment": str(c.environment),
+                    "created_at": c.created_at,
+                }
+                for c in commands
+            ]
+            typer.echo(json_response("ok", {"commands": cmd_data}))
+            return
+
         if not commands:
             console.print("[dim]No commands registered.[/dim]")
             return
@@ -300,17 +340,30 @@ def show(
     conn = get_connection(config.db_path)
     try:
         init_db(conn)
+
+        from navigator.output import is_json, json_response
+
         cmd = get_command_by_name(conn, bare_name)
         if cmd is None:
+            if is_json():
+                typer.echo(json_response("error", message=f"Command '{bare_name}' not found."))
+                raise typer.Exit(code=1)
             console.print(f"[red]Command '{bare_name}' not found.[/red]")
             raise typer.Exit(code=1)
 
         if cmd.namespace != parsed_ns:
+            if is_json():
+                typer.echo(json_response("error", message=f"Command '{bare_name}' is in namespace '{cmd.namespace}', not '{parsed_ns}'."))
+                raise typer.Exit(code=1)
             console.print(
                 f"[red]Command '{bare_name}' is in namespace '{cmd.namespace}', "
                 f"not '{parsed_ns}'.[/red]"
             )
             raise typer.Exit(code=1)
+
+        if is_json():
+            typer.echo(json_response("ok", cmd.model_dump(mode="json")))
+            return
 
         table = Table(title=f"Command: {cmd.name}", show_header=False)
         table.add_column("Field")
@@ -643,6 +696,12 @@ def schedule(
         manager = CrontabManager(lock_path=get_data_dir() / "crontab.lock")
         entries = manager.list_schedules()
 
+        from navigator.output import is_json, json_response
+
+        if is_json():
+            typer.echo(json_response("ok", {"schedules": entries}))
+            return
+
         if not entries:
             console.print("[dim]No scheduled commands.[/dim]")
             return
@@ -764,6 +823,24 @@ def watch(
         config = load_config()
         manager = WatcherManager(config)
         watchers = manager.list_watchers()
+
+        from navigator.output import is_json, json_response
+
+        if is_json():
+            watcher_data = [
+                {
+                    "id": w.id,
+                    "command_name": w.command_name,
+                    "watch_path": str(w.watch_path),
+                    "patterns": w.patterns,
+                    "debounce_ms": w.debounce_ms,
+                    "active_hours": w.active_hours,
+                    "status": w.status,
+                }
+                for w in watchers
+            ]
+            typer.echo(json_response("ok", {"watchers": watcher_data}))
+            return
 
         if not watchers:
             console.print("[dim]No watchers registered.[/dim]")
@@ -1048,6 +1125,21 @@ def logs(
 
     config = load_config()
     entries = list_execution_logs(config.log_dir, name, count=count)
+
+    from navigator.output import is_json, json_response
+
+    if is_json():
+        log_data = [
+            {
+                "timestamp": e.timestamp,
+                "exit_code": e.exit_code,
+                "duration": e.duration,
+                "attempt": e.attempt,
+            }
+            for e in entries
+        ]
+        typer.echo(json_response("ok", {"logs": log_data}))
+        return
 
     if not entries:
         console.print(f"[dim]No execution logs for '{name}'[/dim]")
