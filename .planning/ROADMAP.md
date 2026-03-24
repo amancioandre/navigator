@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. All internal path references are resolved to absolute paths at registration time
 **Plans**: 2 plans
 Plans:
-- [ ] 01-01-PLAN.md — Package skeleton, CLI entry point with 8 subcommand stubs, test infrastructure
+- [x] 01-01-PLAN.md — Package skeleton, CLI entry point with 8 subcommand stubs, test infrastructure
 - [ ] 01-02-PLAN.md — Config system with TOML persistence and absolute path resolution
 
 ### Phase 2: Command Registry

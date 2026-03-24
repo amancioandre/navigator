@@ -68,7 +68,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: Navigator installs globally via pip/uv (`navigator` CLI on PATH)
+- [x] **INFRA-01**: Navigator installs globally via pip/uv (`navigator` CLI on PATH)
 - [ ] **INFRA-02**: systemd user services for watcher daemon and future bot listener
 - [ ] **INFRA-03**: `navigator doctor` verifies crontab entries, paths, permissions, and service health
 - [ ] **INFRA-04**: `navigator --output json` provides machine-readable output for Claude Code agents
@@ -158,7 +158,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NS-02 | Phase 7 | Pending |
 | NS-03 | Phase 7 | Pending |
 | NS-04 | Phase 7 | Pending |
-| INFRA-01 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 9 | Pending |
 | INFRA-03 | Phase 10 | Pending |
 | INFRA-04 | Phase 10 | Pending |
