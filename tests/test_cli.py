@@ -680,3 +680,79 @@ class TestSchedule:
         )
         assert result.exit_code == 1
         assert "Cannot use --cron and --remove together" in result.output
+
+
+# === Phase 6 tests — watch subcommand ===
+
+
+class TestWatch:
+    """Tests for navigator watch command."""
+
+    def test_watch_list_empty(self, cli_runner, app, tmp_config_dir):
+        """navigator watch --list shows 'No watchers' when none registered."""
+        result = cli_runner.invoke(app, ["watch", "--list"])
+        assert result.exit_code == 0
+        assert "No watchers registered" in result.output
+
+    def test_watch_register(self, cli_runner, app, tmp_config_dir):
+        """Register a watcher for existing command succeeds."""
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "Run tests",
+            "--environment", "/tmp",
+        ])
+        result = cli_runner.invoke(app, [
+            "watch", "test-cmd", "--path", "/tmp", "--pattern", "*.md",
+        ])
+        assert result.exit_code == 0
+        assert "Registered watcher" in result.output
+
+    def test_watch_register_missing_command(self, cli_runner, app, tmp_config_dir):
+        """Registering watcher for nonexistent command exits 1."""
+        result = cli_runner.invoke(app, [
+            "watch", "nonexistent", "--path", "/tmp",
+        ])
+        assert result.exit_code == 1
+        assert "not found" in result.output
+
+    def test_watch_list_after_register(self, cli_runner, app, tmp_config_dir):
+        """After registering a watcher, --list shows it in a table."""
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "Run tests",
+            "--environment", "/tmp",
+        ])
+        cli_runner.invoke(app, [
+            "watch", "test-cmd", "--path", "/tmp", "--pattern", "*.md",
+        ])
+        result = cli_runner.invoke(app, ["watch", "--list"])
+        assert result.exit_code == 0
+        assert "test-cmd" in result.output
+        assert "Registered Watchers" in result.output
+
+    def test_watch_remove(self, cli_runner, app, tmp_config_dir):
+        """Removing watchers for a command succeeds."""
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "Run tests",
+            "--environment", "/tmp",
+        ])
+        cli_runner.invoke(app, [
+            "watch", "test-cmd", "--path", "/tmp",
+        ])
+        result = cli_runner.invoke(app, ["watch", "test-cmd", "--remove"])
+        assert result.exit_code == 0
+        assert "Removed" in result.output
+
+    def test_watch_remove_nonexistent(self, cli_runner, app, tmp_config_dir):
+        """Removing watchers for command with none shows appropriate message."""
+        result = cli_runner.invoke(app, ["watch", "nonexistent", "--remove"])
+        assert result.exit_code == 0
+        assert "No watchers found" in result.output
+
+    def test_watch_no_args(self, cli_runner, app, tmp_config_dir):
+        """Watch with command but no --path or --remove shows usage hint."""
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "Run tests",
+            "--environment", "/tmp",
+        ])
+        result = cli_runner.invoke(app, ["watch", "test-cmd"])
+        assert result.exit_code == 1
+        assert "Use --path" in result.output

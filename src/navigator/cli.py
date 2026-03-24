@@ -523,9 +523,155 @@ def schedule(
 
 
 @app.command()
-def watch() -> None:
+def watch(
+    command: Annotated[str | None, typer.Argument(help="Command name")] = None,
+    path: Annotated[str | None, typer.Option("--path", help="Directory to watch")] = None,
+    pattern: Annotated[
+        str | None, typer.Option("--pattern", help="Glob pattern (e.g., '*.md')")
+    ] = None,
+    debounce: Annotated[
+        int, typer.Option("--debounce", help="Debounce in milliseconds")
+    ] = 500,
+    ignore: Annotated[
+        list[str] | None, typer.Option("--ignore", help="Ignore pattern")
+    ] = None,
+    active_hours: Annotated[
+        str | None, typer.Option("--active-hours", help="HH:MM-HH:MM time window")
+    ] = None,
+    remove: Annotated[
+        bool, typer.Option("--remove", help="Remove watcher")
+    ] = False,
+    list_all: Annotated[
+        bool, typer.Option("--list", help="List all watchers")
+    ] = False,
+    start: Annotated[
+        bool, typer.Option("--start", help="Start watcher daemon")
+    ] = False,
+) -> None:
     """Register a file watcher for a command."""
-    typer.echo("watch: not yet implemented")
+    # --list mode: show all watchers
+    if list_all:
+        from navigator.config import load_config
+        from navigator.watcher import WatcherManager
+
+        config = load_config()
+        manager = WatcherManager(config)
+        watchers = manager.list_watchers()
+
+        if not watchers:
+            console.print("[dim]No watchers registered.[/dim]")
+            return
+
+        table = Table(title="Registered Watchers")
+        table.add_column("ID", style="dim")
+        table.add_column("Command", style="cyan")
+        table.add_column("Path", style="green")
+        table.add_column("Pattern")
+        table.add_column("Debounce")
+        table.add_column("Active Hours")
+        table.add_column("Status")
+
+        for w in watchers:
+            table.add_row(
+                w.id[:8],
+                w.command_name,
+                str(w.watch_path),
+                ", ".join(w.patterns),
+                f"{w.debounce_ms}ms",
+                w.active_hours or "(always)",
+                w.status,
+            )
+
+        console.print(table)
+        return
+
+    # --start mode: run the watcher daemon
+    if start:
+        from navigator.config import load_config
+        from navigator.watcher import run_daemon
+
+        config = load_config()
+        run_daemon(config)
+        return
+
+    # Validation: command name required for register/remove
+    if command is None:
+        console.print("[red]Command name required.[/red]")
+        raise typer.Exit(code=1)
+
+    if remove and path:
+        console.print("[red]Cannot use --path and --remove together.[/red]")
+        raise typer.Exit(code=1)
+
+    # --remove mode
+    if remove:
+        from navigator.config import load_config
+        from navigator.watcher import WatcherManager
+
+        config = load_config()
+        manager = WatcherManager(config)
+        count = manager.remove_watchers_for_command(command)
+        if count > 0:
+            console.print(
+                f"[green]Removed {count} watcher(s) for '{command}'[/green]"
+            )
+        else:
+            console.print(
+                f"[yellow]No watchers found for '{command}'.[/yellow]"
+            )
+        return
+
+    # Register mode: --path is required
+    if not path:
+        console.print(
+            "[red]Use --path to register a watcher or --remove to remove.[/red]"
+        )
+        raise typer.Exit(code=1)
+
+    # Validate command exists and is active
+    from navigator.config import load_config, resolve_path
+    from navigator.db import get_command_by_name, get_connection, init_db
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        cmd = get_command_by_name(conn, command)
+        if cmd is None:
+            console.print(f"[red]Command '{command}' not found.[/red]")
+            raise typer.Exit(code=1)
+        if cmd.status == "paused":
+            console.print(
+                f"[red]Command '{command}' is paused. "
+                f"Run `navigator resume {command}` first.[/red]"
+            )
+            raise typer.Exit(code=1)
+    finally:
+        conn.close()
+
+    from navigator.watcher import WatcherManager
+
+    abs_path = resolve_path(path)
+    patterns = [pattern] if pattern else None
+    ignore_list = ignore if ignore else None
+
+    manager = WatcherManager(config)
+    try:
+        manager.register_watcher(
+            command_name=command,
+            watch_path=abs_path,
+            patterns=patterns,
+            ignore_patterns=ignore_list,
+            debounce_ms=debounce,
+            active_hours=active_hours,
+        )
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
+
+    console.print(
+        f"[green]Registered watcher for '{command}' on {abs_path}[/green]"
+    )
 
 
 @app.command()
