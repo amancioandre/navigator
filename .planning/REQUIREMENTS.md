@@ -43,11 +43,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### File Watching
 
-- [ ] **WATCH-01**: User can register a file/folder watcher that triggers a command on changes
-- [ ] **WATCH-02**: Watchers use inotify (via watchdog) with configurable debounce (default 500ms)
-- [ ] **WATCH-03**: Watchers have self-trigger guards (ignore changes made by the triggered command itself)
-- [ ] **WATCH-04**: Watchers support time-window constraints (e.g., only trigger between 9am-5pm)
-- [ ] **WATCH-05**: Watchers support ignore patterns (editor temp files, .git, etc.)
+- [x] **WATCH-01**: User can register a file/folder watcher that triggers a command on changes
+- [x] **WATCH-02**: Watchers use inotify (via watchdog) with configurable debounce (default 500ms)
+- [x] **WATCH-03**: Watchers have self-trigger guards (ignore changes made by the triggered command itself)
+- [x] **WATCH-04**: Watchers support time-window constraints (e.g., only trigger between 9am-5pm)
+- [x] **WATCH-05**: Watchers support ignore patterns (editor temp files, .git, etc.)
 - [ ] **WATCH-06**: Watcher daemon runs as a systemd service that survives reboots
 
 ### Chaining
@@ -142,11 +142,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | SCHED-03 | Phase 5 | Complete |
 | SCHED-04 | Phase 5 | Complete |
 | SCHED-05 | Phase 5 | Complete |
-| WATCH-01 | Phase 6 | Pending |
-| WATCH-02 | Phase 6 | Pending |
-| WATCH-03 | Phase 6 | Pending |
-| WATCH-04 | Phase 6 | Pending |
-| WATCH-05 | Phase 6 | Pending |
+| WATCH-01 | Phase 6 | Complete |
+| WATCH-02 | Phase 6 | Complete |
+| WATCH-03 | Phase 6 | Complete |
+| WATCH-04 | Phase 6 | Complete |
+| WATCH-05 | Phase 6 | Complete |
 | WATCH-06 | Phase 9 | Pending |
 | CHAIN-01 | Phase 8 | Pending |
 | CHAIN-02 | Phase 8 | Pending |

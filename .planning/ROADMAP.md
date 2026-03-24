@@ -110,7 +110,7 @@ Plans:
   5. Watchers support ignore patterns for editor temp files, .git, etc.
 **Plans**: 2 plans
 Plans:
-- [ ] 06-01-PLAN.md — Watcher model, DB schema + CRUD, event handler (debounce, guard, time window), watchdog dependency
+- [x] 06-01-PLAN.md — Watcher model, DB schema + CRUD, event handler (debounce, guard, time window), watchdog dependency
 - [ ] 06-02-PLAN.md — Wire watch CLI command (--path, --pattern, --remove, --list, --start daemon) with integration tests
 
 ### Phase 7: Namespacing
