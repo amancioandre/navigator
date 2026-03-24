@@ -556,6 +556,10 @@ def exec_command(
         int | None,
         typer.Option("--retries", help="Max retry attempts (overrides config default)"),
     ] = None,
+    dry_run: Annotated[
+        bool,
+        typer.Option("--dry-run", help="Show what would execute without running"),
+    ] = False,
 ) -> None:
     """Execute a registered command."""
     from navigator.config import load_config
@@ -591,6 +595,46 @@ def exec_command(
                 f"Run `navigator resume {bare_name}` first.[/red]"
             )
             raise typer.Exit(code=1)
+
+        if dry_run:
+            from navigator.executor import build_command_args, build_clean_env
+            from navigator.secrets import load_secrets
+
+            secrets = load_secrets(cmd.secrets)
+            env = build_clean_env(secrets)
+            args = build_command_args(cmd.prompt, cmd.allowed_tools)
+
+            dry_run_data = {
+                "command_name": cmd.name,
+                "namespace": cmd.namespace,
+                "command_args": args,
+                "working_directory": str(cmd.environment),
+                "env_keys": sorted(env.keys()),
+                "allowed_tools": cmd.allowed_tools,
+                "chain_next": cmd.chain_next,
+                "on_failure_continue": cmd.on_failure_continue,
+            }
+
+            from navigator.output import is_json, json_response
+
+            if is_json():
+                typer.echo(json_response("ok", dry_run_data))
+            else:
+                from rich.panel import Panel
+
+                lines = []
+                lines.append(f"Command:    {cmd.name}")
+                lines.append(f"Namespace:  {cmd.namespace}")
+                lines.append(f"Directory:  {cmd.environment}")
+                lines.append(f"Args:       {' '.join(args)}")
+                lines.append(f"Env keys:   {', '.join(sorted(env.keys()))}")
+                tools_str = ", ".join(cmd.allowed_tools) if cmd.allowed_tools else "(none)"
+                lines.append(f"Tools:      {tools_str}")
+                if cmd.chain_next:
+                    lines.append(f"Chain next: {cmd.chain_next}")
+                    lines.append(f"On failure: {'continue' if cmd.on_failure_continue else 'stop'}")
+                console.print(Panel("\n".join(lines), title="Dry Run", border_style="cyan"))
+            return
 
         # Chain execution: if command has chain_next, run entire chain
         if cmd.chain_next is not None:
