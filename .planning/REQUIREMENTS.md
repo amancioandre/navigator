@@ -27,7 +27,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **EXEC-03**: Secrets are never logged, never passed as CLI arguments, and never visible in process tables
 - [x] **EXEC-04**: Executor retries failed commands with exponential backoff (`--retries N`)
 - [x] **EXEC-05**: Each execution captures stdout/stderr to per-execution log files
-- [ ] **EXEC-06**: User can view execution logs via `navigator logs <command>`
+- [x] **EXEC-06**: User can view execution logs via `navigator logs <command>`
 - [x] **EXEC-07**: Executor runs commands in the registered environment path (working directory)
 - [x] **EXEC-08**: Executor builds a clean environment (not inheriting full parent env) with only declared variables
 - [x] **EXEC-09**: Executor tracks child PIDs and uses process groups for cleanup (no zombies)
@@ -132,7 +132,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXEC-03 | Phase 3 | Complete |
 | EXEC-04 | Phase 4 | Complete |
 | EXEC-05 | Phase 4 | Complete |
-| EXEC-06 | Phase 4 | Pending |
+| EXEC-06 | Phase 4 | Complete |
 | EXEC-07 | Phase 3 | Complete |
 | EXEC-08 | Phase 3 | Complete |
 | EXEC-09 | Phase 4 | Complete |

@@ -81,7 +81,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 04-01-PLAN.md — Execution engine hardening: Popen with process groups, retry, timeout, execution logging module
-- [ ] 04-02-PLAN.md — CLI wiring: --timeout/--retries flags on exec, navigator logs command
+- [x] 04-02-PLAN.md — CLI wiring: --timeout/--retries flags on exec, navigator logs command
 
 ### Phase 5: Cron Scheduling
 **Goal**: Users can schedule commands to run automatically via the system crontab
