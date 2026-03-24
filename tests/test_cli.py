@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-SUBCOMMANDS = ["register", "list", "exec", "schedule", "watch", "chain", "logs", "doctor", "namespace"]
+SUBCOMMANDS = ["register", "list", "exec", "schedule", "watch", "chain", "logs", "daemon", "install-service", "uninstall-service", "service", "doctor", "namespace"]
 
 
 # === Phase 1 tests (INFRA-01) ===

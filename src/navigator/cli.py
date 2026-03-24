@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import subprocess
 import sqlite3
 from pathlib import Path
 from typing import Annotated
@@ -1079,6 +1080,76 @@ def logs(
         )
 
     console.print(table)
+
+
+@app.command()
+def daemon() -> None:
+    """Run the watcher daemon in foreground (for systemd)."""
+    from navigator.config import load_config
+    from navigator.watcher import run_daemon
+
+    config = load_config()
+    console.print("[dim]Starting watcher daemon...[/dim]")
+    run_daemon(config)
+
+
+@app.command(name="install-service")
+def install_service_cmd(
+    no_linger: Annotated[
+        bool,
+        typer.Option("--no-linger", help="Skip loginctl enable-linger"),
+    ] = False,
+) -> None:
+    """Generate and install the systemd user service."""
+    from navigator.service import install_service
+
+    try:
+        path = install_service(enable_linger=not no_linger)
+    except FileNotFoundError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
+    except subprocess.CalledProcessError as exc:
+        console.print(f"[red]systemctl failed: {exc}[/red]")
+        raise typer.Exit(code=1) from None
+
+    console.print(f"[green]Service installed at {path}[/green]")
+    console.print("[dim]Start with: navigator service start[/dim]")
+
+
+@app.command(name="uninstall-service")
+def uninstall_service_cmd() -> None:
+    """Remove the systemd user service."""
+    from navigator.service import uninstall_service
+
+    existed = uninstall_service()
+    if existed:
+        console.print("[green]Service uninstalled.[/green]")
+    else:
+        console.print("[yellow]Service was not installed.[/yellow]")
+
+
+@app.command()
+def service(
+    action: Annotated[
+        str,
+        typer.Argument(help="Action: status, start, stop, restart"),
+    ],
+) -> None:
+    """Manage the Navigator systemd service."""
+    from navigator.service import service_control
+
+    try:
+        result = service_control(action)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
+
+    if result.stdout:
+        console.print(result.stdout.strip())
+    if result.stderr:
+        console.print(f"[dim]{result.stderr.strip()}[/dim]")
+    if result.returncode != 0:
+        raise typer.Exit(code=result.returncode)
 
 
 @app.command()
