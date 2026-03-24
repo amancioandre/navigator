@@ -130,3 +130,55 @@ class TestNamespaceDbCrud:
     def test_delete_nonexistent_returns_zero(self, db_conn):
         rows = delete_namespace(db_conn, "ghost-ns")
         assert rows == 0
+
+
+class TestParseQualifiedName:
+    """Tests for qualified name parsing (namespace:command)."""
+
+    def test_qualified_name_splits(self):
+        from navigator.namespace import parse_qualified_name
+
+        ns, cmd = parse_qualified_name("gamescout:scrape")
+        assert ns == "gamescout"
+        assert cmd == "scrape"
+
+    def test_bare_name_defaults_to_default(self):
+        from navigator.namespace import parse_qualified_name
+
+        ns, cmd = parse_qualified_name("my-cmd")
+        assert ns == "default"
+        assert cmd == "my-cmd"
+
+    def test_multiple_colons_raises(self):
+        from navigator.namespace import parse_qualified_name
+
+        with pytest.raises(ValueError, match="multiple colons"):
+            parse_qualified_name("a:b:c")
+
+    def test_empty_namespace_raises(self):
+        from navigator.namespace import parse_qualified_name
+
+        with pytest.raises(ValueError, match="empty"):
+            parse_qualified_name(":bad")
+
+    def test_empty_command_raises(self):
+        from navigator.namespace import parse_qualified_name
+
+        with pytest.raises(ValueError, match="empty"):
+            parse_qualified_name("bad:")
+
+
+class TestNamespaceSecretsPath:
+    """Tests for per-namespace secrets path resolution."""
+
+    def test_named_namespace(self):
+        from navigator.namespace import namespace_secrets_path
+
+        result = namespace_secrets_path("myproject")
+        assert result == Path.home() / ".secrets" / "myproject"
+
+    def test_default_namespace(self):
+        from navigator.namespace import namespace_secrets_path
+
+        result = namespace_secrets_path("default")
+        assert result == Path.home() / ".secrets" / "default"
