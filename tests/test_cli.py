@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 SUBCOMMANDS = ["register", "list", "exec", "schedule", "watch", "chain", "logs", "doctor"]
@@ -530,3 +532,151 @@ class TestLogs:
         assert result.exit_code == 0
         # Table should exist
         assert "Execution Logs" in result.output
+
+
+# === Phase 5 tests — schedule subcommand ===
+
+
+class TestSchedule:
+    """Tests for navigator schedule command."""
+
+    @pytest.fixture()
+    def schedule_env(self, tmp_config_dir, tmp_path, monkeypatch):
+        """Set up environment for schedule CLI tests.
+
+        Patches CronTab to use a tabfile and shutil.which to find navigator.
+        Registers a test command in the DB for scheduling operations.
+        """
+        tab_file = tmp_path / "crontab"
+        tab_file.write_text("")
+
+        monkeypatch.setattr(
+            "navigator.scheduler.CronTab",
+            lambda **kw: __import__("crontab").CronTab(tabfile=str(tab_file)),
+        )
+        monkeypatch.setattr(
+            "navigator.scheduler.shutil",
+            type(
+                "shutil",
+                (),
+                {"which": staticmethod(lambda cmd: "/usr/local/bin/navigator")},
+            ),
+        )
+
+        # Register a test command via CLI so DB is properly initialized
+        from typer.testing import CliRunner
+
+        from navigator.cli import app as nav_app
+
+        runner = CliRunner()
+        runner.invoke(nav_app, [
+            "register", "test-cmd",
+            "--prompt", "Run tests",
+            "--environment", "/tmp",
+        ])
+
+        return {"tab_file": tab_file}
+
+    @pytest.fixture()
+    def schedule_env_with_paused(self, schedule_env, cli_runner, app):
+        """Schedule env with an additional paused command."""
+        cli_runner.invoke(app, [
+            "register", "paused-cmd",
+            "--prompt", "Paused command",
+            "--environment", "/tmp",
+        ])
+        cli_runner.invoke(app, ["pause", "paused-cmd"])
+        return schedule_env
+
+    def test_schedule_command_with_cron(self, cli_runner, app, schedule_env):
+        """navigator schedule test-cmd --cron '*/5 * * * *' exits 0 with success."""
+        result = cli_runner.invoke(
+            app, ["schedule", "test-cmd", "--cron", "*/5 * * * *"]
+        )
+        assert result.exit_code == 0
+        assert "Scheduled" in result.output
+        assert "test-cmd" in result.output
+
+    def test_schedule_command_list(self, cli_runner, app, schedule_env):
+        """navigator schedule --list shows scheduled commands in table."""
+        # First schedule a command
+        cli_runner.invoke(
+            app, ["schedule", "test-cmd", "--cron", "*/5 * * * *"]
+        )
+        result = cli_runner.invoke(app, ["schedule", "--list"])
+        assert result.exit_code == 0
+        assert "test-cmd" in result.output
+        assert "Scheduled Commands" in result.output
+
+    def test_schedule_command_list_empty(self, cli_runner, app, schedule_env):
+        """navigator schedule --list with no schedules shows empty message."""
+        result = cli_runner.invoke(app, ["schedule", "--list"])
+        assert result.exit_code == 0
+        assert "No scheduled commands" in result.output
+
+    def test_schedule_command_remove(self, cli_runner, app, schedule_env):
+        """navigator schedule test-cmd --remove exits 0 with success."""
+        # First schedule, then remove
+        cli_runner.invoke(
+            app, ["schedule", "test-cmd", "--cron", "*/5 * * * *"]
+        )
+        result = cli_runner.invoke(
+            app, ["schedule", "test-cmd", "--remove"]
+        )
+        assert result.exit_code == 0
+        assert "Removed schedule" in result.output
+
+    def test_schedule_command_remove_not_scheduled(
+        self, cli_runner, app, schedule_env
+    ):
+        """navigator schedule test-cmd --remove when not scheduled shows warning."""
+        result = cli_runner.invoke(
+            app, ["schedule", "test-cmd", "--remove"]
+        )
+        assert result.exit_code == 0
+        assert "was not scheduled" in result.output
+
+    def test_schedule_nonexistent_command(
+        self, cli_runner, app, schedule_env
+    ):
+        """Scheduling unknown command shows error and exit 1."""
+        result = cli_runner.invoke(
+            app, ["schedule", "ghost-cmd", "--cron", "*/5 * * * *"]
+        )
+        assert result.exit_code == 1
+        assert "not found" in result.output
+
+    def test_schedule_paused_command(
+        self, cli_runner, app, schedule_env_with_paused
+    ):
+        """Scheduling paused command shows error suggesting resume."""
+        result = cli_runner.invoke(
+            app, ["schedule", "paused-cmd", "--cron", "*/5 * * * *"]
+        )
+        assert result.exit_code == 1
+        assert "paused" in result.output
+        assert "navigator resume" in result.output
+
+    def test_schedule_invalid_cron(self, cli_runner, app, schedule_env):
+        """Invalid cron expression shows error and exit 1."""
+        result = cli_runner.invoke(
+            app, ["schedule", "test-cmd", "--cron", "invalid-cron"]
+        )
+        assert result.exit_code == 1
+        assert "Invalid cron" in result.output or "invalid" in result.output.lower()
+
+    def test_schedule_no_args(self, cli_runner, app, schedule_env):
+        """navigator schedule with no arguments shows error."""
+        result = cli_runner.invoke(app, ["schedule"])
+        assert result.exit_code == 1
+        assert "Command name required" in result.output or "Use --cron" in result.output
+
+    def test_schedule_cron_and_remove_conflict(
+        self, cli_runner, app, schedule_env
+    ):
+        """Using both --cron and --remove shows error."""
+        result = cli_runner.invoke(
+            app, ["schedule", "test-cmd", "--cron", "*/5 * * * *", "--remove"]
+        )
+        assert result.exit_code == 1
+        assert "Cannot use --cron and --remove together" in result.output
