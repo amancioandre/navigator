@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 3: Execution Core** - Run registered commands as Claude Code subprocesses with secrets and clean environments
 - [ ] **Phase 4: Execution Hardening** - Retry, timeouts, logging, and process lifecycle management
 - [ ] **Phase 5: Cron Scheduling** - Schedule commands via real system crontab with lock-safe writes
-- [ ] **Phase 6: File Watching** - Trigger commands on filesystem changes with debounce and guards
+- [x] **Phase 6: File Watching** - Trigger commands on filesystem changes with debounce and guards (completed 2026-03-24)
 - [ ] **Phase 7: Namespacing** - Multi-project command isolation with per-namespace secrets
 - [ ] **Phase 8: Command Chaining** - Sequential command triggers with depth limits and cycle detection
 - [ ] **Phase 9: Daemon and systemd** - Persistent watcher daemon and systemd service installation
@@ -111,7 +111,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 06-01-PLAN.md — Watcher model, DB schema + CRUD, event handler (debounce, guard, time window), watchdog dependency
-- [ ] 06-02-PLAN.md — Wire watch CLI command (--path, --pattern, --remove, --list, --start daemon) with integration tests
+- [x] 06-02-PLAN.md — Wire watch CLI command (--path, --pattern, --remove, --list, --start daemon) with integration tests
 
 ### Phase 7: Namespacing
 **Goal**: Commands are organized by project with isolated secrets and cross-namespace visibility
@@ -170,7 +170,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 3. Execution Core | 0/2 | Planning | - |
 | 4. Execution Hardening | 0/2 | Planning | - |
 | 5. Cron Scheduling | 0/2 | Planning | - |
-| 6. File Watching | 0/2 | Planning | - |
+| 6. File Watching | 2/2 | Complete   | 2026-03-24 |
 | 7. Namespacing | 0/TBD | Not started | - |
 | 8. Command Chaining | 0/TBD | Not started | - |
 | 9. Daemon and systemd | 0/TBD | Not started | - |
