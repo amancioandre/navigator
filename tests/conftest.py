@@ -10,6 +10,16 @@ import typer.testing
 from navigator.cli import app as navigator_app
 
 
+@pytest.fixture(autouse=True)
+def _reset_output_format():
+    """Reset the global output_format after each test to prevent state leakage."""
+    import navigator.output as nav_output
+
+    nav_output.output_format = "text"
+    yield
+    nav_output.output_format = "text"
+
+
 @pytest.fixture()
 def cli_runner() -> typer.testing.CliRunner:
     """Return a Typer CLI test runner."""
