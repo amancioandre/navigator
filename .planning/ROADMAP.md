@@ -166,7 +166,7 @@ Plans:
   3. `navigator --output json` provides machine-readable output for Claude Code agents
 **Plans**: 2 plans
 Plans:
-- [ ] 10-01-PLAN.md — JSON output infrastructure (--output json global flag) and --dry-run on exec
+- [x] 10-01-PLAN.md — JSON output infrastructure (--output json global flag) and --dry-run on exec
 - [ ] 10-02-PLAN.md — Doctor command with health checks, --fix auto-repair, and JSON output
 
 ## Progress
@@ -186,4 +186,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Namespacing | 1/2 | In Progress|  |
 | 8. Command Chaining | 2/2 | Complete   | 2026-03-24 |
 | 9. Daemon and systemd | 0/2 | Planning | - |
-| 10. Operational Polish | 0/2 | Planning | - |
+| 10. Operational Polish | 1/2 | In Progress|  |

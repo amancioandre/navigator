@@ -17,7 +17,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **REG-06**: User can pause a registered command (disables scheduling/watching without deleting)
 - [x] **REG-07**: User can resume a paused command
 - [x] **REG-08**: User can list commands sorted by created date for housekeeping
-- [ ] **REG-09**: User can dry-run a command to see what would execute without running it
+- [x] **REG-09**: User can dry-run a command to see what would execute without running it
 - [x] **REG-10**: Registry persists in SQLite with crash-safe atomic transactions
 
 ### Execution
@@ -71,7 +71,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **INFRA-01**: Navigator installs globally via pip/uv (`navigator` CLI on PATH)
 - [x] **INFRA-02**: systemd user services for watcher daemon and future bot listener
 - [ ] **INFRA-03**: `navigator doctor` verifies crontab entries, paths, permissions, and service health
-- [ ] **INFRA-04**: `navigator --output json` provides machine-readable output for Claude Code agents
+- [x] **INFRA-04**: `navigator --output json` provides machine-readable output for Claude Code agents
 - [x] **INFRA-05**: Configuration file at `~/.config/navigator/config.toml`
 - [x] **INFRA-06**: `navigator install-service` generates and installs systemd unit files
 - [x] **INFRA-07**: Absolute path resolution at registration time (prevents stale crontab refs after reinstall)
@@ -125,7 +125,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REG-06 | Phase 2 | Complete |
 | REG-07 | Phase 2 | Complete |
 | REG-08 | Phase 2 | Complete |
-| REG-09 | Phase 10 | Pending |
+| REG-09 | Phase 10 | Complete |
 | REG-10 | Phase 2 | Complete |
 | EXEC-01 | Phase 3 | Complete |
 | EXEC-02 | Phase 3 | Complete |
@@ -161,7 +161,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 9 | Complete |
 | INFRA-03 | Phase 10 | Pending |
-| INFRA-04 | Phase 10 | Pending |
+| INFRA-04 | Phase 10 | Complete |
 | INFRA-05 | Phase 1 | Complete |
 | INFRA-06 | Phase 9 | Complete |
 | INFRA-07 | Phase 1 | Complete |
