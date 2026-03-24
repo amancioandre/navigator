@@ -338,9 +338,49 @@ def resume(
 
 
 @app.command(name="exec")
-def exec_command() -> None:
+def exec_command(
+    name: Annotated[str, typer.Argument(help="Command name to execute")],
+) -> None:
     """Execute a registered command."""
-    typer.echo("exec: not yet implemented")
+    from navigator.config import load_config
+    from navigator.db import get_command_by_name, get_connection, init_db
+    from navigator.executor import execute_command
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        cmd = get_command_by_name(conn, name)
+        if cmd is None:
+            console.print(f"[red]Command '{name}' not found.[/red]")
+            raise typer.Exit(code=1)
+
+        if cmd.status == "paused":
+            console.print(
+                f"[red]Command '{name}' is paused. "
+                f"Run `navigator resume {name}` first.[/red]"
+            )
+            raise typer.Exit(code=1)
+
+        try:
+            result = execute_command(cmd)
+        except FileNotFoundError as e:
+            console.print(f"[red]{e}[/red]")
+            raise typer.Exit(code=1) from None
+
+        if result.stdout:
+            console.print(result.stdout)
+
+        if result.returncode != 0:
+            console.print(
+                f"[red]Command '{name}' exited with code "
+                f"{result.returncode}[/red]"
+            )
+            if result.stderr:
+                console.print(f"[dim]{result.stderr}[/dim]")
+            raise typer.Exit(code=result.returncode)
+    finally:
+        conn.close()
 
 
 @app.command()
