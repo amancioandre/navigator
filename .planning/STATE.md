@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 04-02-PLAN.md
-last_updated: "2026-03-24T16:44:32.757Z"
+status: Ready to execute
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-24T17:24:54.530Z"
 progress:
   total_phases: 10
   completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 10
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Autonomous task orchestration -- registered commands run on schedule or on file changes, with the right context and secrets, without human intervention unless something fails.
-**Current focus:** Phase 04 — execution-hardening
+**Current focus:** Phase 05 — cron-scheduling
 
 ## Current Position
 
-Phase: 5
-Plan: Not started
+Phase: 05 (cron-scheduling) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -54,6 +54,7 @@ Plan: Not started
 | Phase 03 P02 | 1min | 1 tasks | 2 files |
 | Phase 04 P01 | 3min | 2 tasks | 4 files |
 | Phase 04 P02 | 3min | 1 tasks | 2 files |
+| Phase 05 P01 | 2min | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -77,6 +78,7 @@ Recent decisions affecting current work:
 - [Phase 04]: Exit code 124 for timeout (coreutils convention); microsecond log filenames; 5s SIGTERM grace before SIGKILL; signal handlers guarded by main thread check
 - [Phase 04]: Monkeypatch executor module for lazy-import compatibility in CLI tests
 - [Phase 04]: Exit code color coding in logs table: green=0, red=non-zero, yellow=124 (timeout)
+- [Phase 05]: fcntl lock tracks acquired state to avoid ValueError on fd close when timeout fires
 
 ### Pending Todos
 
@@ -88,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T16:42:08.229Z
-Stopped at: Completed 04-02-PLAN.md
+Last session: 2026-03-24T17:24:54.528Z
+Stopped at: Completed 05-01-PLAN.md
 Resume file: None

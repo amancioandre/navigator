@@ -95,7 +95,7 @@ Plans:
   5. Crontab entries invoke `navigator exec <id>` so scheduled tasks work even if the daemon is down
 **Plans**: 2 plans
 Plans:
-- [ ] 05-01-PLAN.md -- CrontabManager module with file locking, scheduler tests, python-crontab dependency
+- [x] 05-01-PLAN.md -- CrontabManager module with file locking, scheduler tests, python-crontab dependency
 - [ ] 05-02-PLAN.md -- Wire schedule CLI command (--cron, --remove, --list) with integration tests
 
 ### Phase 6: File Watching

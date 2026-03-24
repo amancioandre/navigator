@@ -35,11 +35,11 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Scheduling
 
-- [ ] **SCHED-01**: User can schedule a command with a cron expression via `navigator schedule <command> --cron <expr>`
-- [ ] **SCHED-02**: Scheduled commands create tagged entries in the real system crontab (`# navigator:<id>`)
-- [ ] **SCHED-03**: User can unschedule a command (removes crontab entry)
-- [ ] **SCHED-04**: Crontab writes are file-locked to prevent corruption from concurrent access
-- [ ] **SCHED-05**: Crontab entries invoke `navigator exec <id>` so tasks survive daemon downtime
+- [x] **SCHED-01**: User can schedule a command with a cron expression via `navigator schedule <command> --cron <expr>`
+- [x] **SCHED-02**: Scheduled commands create tagged entries in the real system crontab (`# navigator:<id>`)
+- [x] **SCHED-03**: User can unschedule a command (removes crontab entry)
+- [x] **SCHED-04**: Crontab writes are file-locked to prevent corruption from concurrent access
+- [x] **SCHED-05**: Crontab entries invoke `navigator exec <id>` so tasks survive daemon downtime
 
 ### File Watching
 
@@ -137,11 +137,11 @@ Which phases cover which requirements. Updated during roadmap creation.
 | EXEC-08 | Phase 3 | Complete |
 | EXEC-09 | Phase 4 | Complete |
 | EXEC-10 | Phase 4 | Complete |
-| SCHED-01 | Phase 5 | Pending |
-| SCHED-02 | Phase 5 | Pending |
-| SCHED-03 | Phase 5 | Pending |
-| SCHED-04 | Phase 5 | Pending |
-| SCHED-05 | Phase 5 | Pending |
+| SCHED-01 | Phase 5 | Complete |
+| SCHED-02 | Phase 5 | Complete |
+| SCHED-03 | Phase 5 | Complete |
+| SCHED-04 | Phase 5 | Complete |
+| SCHED-05 | Phase 5 | Complete |
 | WATCH-01 | Phase 6 | Pending |
 | WATCH-02 | Phase 6 | Pending |
 | WATCH-03 | Phase 6 | Pending |
