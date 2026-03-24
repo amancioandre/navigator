@@ -93,7 +93,10 @@ Plans:
   3. User can unschedule a command and the crontab entry is removed
   4. Concurrent crontab writes are file-locked to prevent corruption
   5. Crontab entries invoke `navigator exec <id>` so scheduled tasks work even if the daemon is down
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 05-01-PLAN.md -- CrontabManager module with file locking, scheduler tests, python-crontab dependency
+- [ ] 05-02-PLAN.md -- Wire schedule CLI command (--cron, --remove, --list) with integration tests
 
 ### Phase 6: File Watching
 **Goal**: Commands can be triggered by filesystem changes with proper debounce and safety guards
@@ -163,7 +166,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 2. Command Registry | 0/2 | Planning | - |
 | 3. Execution Core | 0/2 | Planning | - |
 | 4. Execution Hardening | 0/2 | Planning | - |
-| 5. Cron Scheduling | 0/TBD | Not started | - |
+| 5. Cron Scheduling | 0/2 | Planning | - |
 | 6. File Watching | 0/TBD | Not started | - |
 | 7. Namespacing | 0/TBD | Not started | - |
 | 8. Command Chaining | 0/TBD | Not started | - |
