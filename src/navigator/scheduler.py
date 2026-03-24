@@ -56,14 +56,15 @@ class CrontabManager:
         self.lock_path.parent.mkdir(parents=True, exist_ok=True)
         lock_fd = open(self.lock_path, "w")  # noqa: SIM115
         deadline = time.monotonic() + 10
+        acquired = False
         try:
             while True:
                 try:
                     fcntl.flock(lock_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    acquired = True
                     break
                 except BlockingIOError:
                     if time.monotonic() >= deadline:
-                        lock_fd.close()
                         msg = (
                             "Could not acquire crontab lock within 10 seconds. "
                             "Another navigator process may be modifying the crontab."
@@ -72,7 +73,8 @@ class CrontabManager:
                     time.sleep(0.1)
             yield
         finally:
-            fcntl.flock(lock_fd, fcntl.LOCK_UN)
+            if acquired:
+                fcntl.flock(lock_fd, fcntl.LOCK_UN)
             lock_fd.close()
 
     def schedule(self, command_name: str, cron_expr: str) -> None:
