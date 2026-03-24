@@ -27,8 +27,9 @@ Autonomous task orchestration — registered commands run on schedule or on file
 
 - ✓ Multi-project namespacing — commands namespaced by project with isolated secrets and cross-namespace references — Phase 7
 
-### Active
 - ✓ Command chaining — sequential triggers with shared state, depth limits, cycle detection, correlation IDs — Phase 8
+
+### Active
 - [ ] Push notifications on failure via messaging bot
 - [ ] Remote CLI via private messaging bot (Telegram/Discord) — full CRUD, long-polling, never exposed publicly
 - [ ] Survives reboots — runs as a systemd service (watcher daemon + bot listener)
