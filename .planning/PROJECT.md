@@ -15,10 +15,11 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - ✓ Globally installed via pip/uv (`navigator` CLI on PATH) — Phase 1
 - ✓ Configuration file at `~/.config/navigator/config.toml` — Phase 1
 - ✓ Absolute path resolution at registration time — Phase 1
+- ✓ Living command registry with CRUD operations (register, list, show, update, pause, resume, delete) — Phase 2
+- ✓ Registry persists in SQLite with crash-safe atomic transactions — Phase 2
+- ✓ List registered commands by created date for housekeeping — Phase 2
 
 ### Active
-
-- [ ] Living command registry with CRUD operations (register, list, update, pause, resume, delete)
 - [ ] Cron-based scheduling via system crontab — Navigator reads and manages real crontab entries
 - [ ] File/folder watching as a trigger pattern (periodic polling or inotify), with optional time-window constraints
 - [ ] Secret injection — reads secrets from a path, passes them as environment variables to Claude Code subprocess
@@ -31,7 +32,6 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - [ ] Remote CLI via private messaging bot (Telegram/Discord) — full CRUD, long-polling, never exposed publicly
 - [ ] Survives reboots — runs as a systemd service (watcher daemon + bot listener)
 - [ ] Globally installed via pip (`pip install navigator`, `navigator` CLI command)
-- [ ] List registered commands by created date for housekeeping (identify stale commands)
 - [ ] Claude Code can understand and invoke the CLI API from other sessions
 - [ ] Exposes skills usable from Claude Code sessions
 
@@ -88,4 +88,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after Phase 1 completion*
+*Last updated: 2026-03-24 after Phase 2 completion*
