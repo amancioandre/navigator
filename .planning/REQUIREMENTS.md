@@ -52,12 +52,12 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Chaining
 
-- [ ] **CHAIN-01**: User can chain commands so completing one triggers the next, with shared state via environment path
-- [ ] **CHAIN-02**: Chained commands run as separate Claude Code sessions (not the same session)
+- [x] **CHAIN-01**: User can chain commands so completing one triggers the next, with shared state via environment path
+- [x] **CHAIN-02**: Chained commands run as separate Claude Code sessions (not the same session)
 - [ ] **CHAIN-03**: Chain execution has configurable failure semantics (stop-on-failure default, continue option)
-- [ ] **CHAIN-04**: Chain depth is limited (default 10) to prevent runaway execution
-- [ ] **CHAIN-05**: Cycles are detected at registration time and rejected
-- [ ] **CHAIN-06**: Each chain run gets a correlation ID for log tracing
+- [x] **CHAIN-04**: Chain depth is limited (default 10) to prevent runaway execution
+- [x] **CHAIN-05**: Cycles are detected at registration time and rejected
+- [x] **CHAIN-06**: Each chain run gets a correlation ID for log tracing
 
 ### Namespacing
 
@@ -148,12 +148,12 @@ Which phases cover which requirements. Updated during roadmap creation.
 | WATCH-04 | Phase 6 | Complete |
 | WATCH-05 | Phase 6 | Complete |
 | WATCH-06 | Phase 9 | Pending |
-| CHAIN-01 | Phase 8 | Pending |
-| CHAIN-02 | Phase 8 | Pending |
+| CHAIN-01 | Phase 8 | Complete |
+| CHAIN-02 | Phase 8 | Complete |
 | CHAIN-03 | Phase 8 | Pending |
-| CHAIN-04 | Phase 8 | Pending |
-| CHAIN-05 | Phase 8 | Pending |
-| CHAIN-06 | Phase 8 | Pending |
+| CHAIN-04 | Phase 8 | Complete |
+| CHAIN-05 | Phase 8 | Complete |
+| CHAIN-06 | Phase 8 | Complete |
 | NS-01 | Phase 7 | Complete |
 | NS-02 | Phase 7 | Complete |
 | NS-03 | Phase 7 | Complete |

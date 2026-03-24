@@ -139,7 +139,7 @@ Plans:
   5. Each chain run gets a correlation ID visible in logs for tracing
 **Plans**: 2 plans
 Plans:
-- [ ] 08-01-PLAN.md — Chain data model (chain_next, on_failure_continue columns), chainer module with cycle detection, depth limits, and chain execution engine
+- [x] 08-01-PLAN.md — Chain data model (chain_next, on_failure_continue columns), chainer module with cycle detection, depth limits, and chain execution engine
 - [ ] 08-02-PLAN.md — Wire chain CLI command (--next, --show, --remove, --on-failure), update exec to follow chains, integration tests
 
 ### Phase 9: Daemon and systemd

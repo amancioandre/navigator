@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 07-02-PLAN.md
-last_updated: "2026-03-24T20:10:00.003Z"
+status: Ready to execute
+stopped_at: Completed 08-01-PLAN.md
+last_updated: "2026-03-24T20:27:15.624Z"
 progress:
   total_phases: 10
   completed_phases: 7
-  total_plans: 14
-  completed_plans: 14
+  total_plans: 16
+  completed_plans: 15
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Autonomous task orchestration -- registered commands run on schedule or on file changes, with the right context and secrets, without human intervention unless something fails.
-**Current focus:** Phase 07 — namespacing
+**Current focus:** Phase 08 — command-chaining
 
 ## Current Position
 
-Phase: 8
-Plan: Not started
+Phase: 08 (command-chaining) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Plan: Not started
 | Phase 06 P02 | 1min | 2 tasks | 3 files |
 | Phase 07 P01 | 3min | 2 tasks | 4 files |
 | Phase 07 P02 | 3min | 2 tasks | 2 files |
+| Phase 08 P01 | 3min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -92,6 +93,8 @@ Recent decisions affecting current work:
 - [Phase 07]: Namespace uses name as primary key (not UUID) since names are unique human-readable identifiers
 - [Phase 07]: Namespace validation on register rejects nonexistent namespaces at CLI level
 - [Phase 07]: Qualified name parsing at exec/show entry points; DB stores bare names
+- [Phase 08]: extra_env parameter on build_clean_env/execute_command for NAVIGATOR_CHAIN_ID injection
+- [Phase 08]: detect_cycle walks from to_name following chain_next to find from_name for cycle detection
 
 ### Pending Todos
 
@@ -103,6 +106,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T20:07:03.572Z
-Stopped at: Completed 07-02-PLAN.md
+Last session: 2026-03-24T20:27:15.622Z
+Stopped at: Completed 08-01-PLAN.md
 Resume file: None
