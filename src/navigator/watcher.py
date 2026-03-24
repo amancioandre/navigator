@@ -25,6 +25,60 @@ from navigator.models import Watcher
 logger = logging.getLogger(__name__)
 
 
+def run_daemon(config: NavigatorConfig) -> None:
+    """Start the watcher daemon -- monitors all active watchers for file changes.
+
+    Creates a single watchdog Observer, schedules a DebouncedHandler per active
+    watcher, and blocks until Ctrl+C. This is a foreground process; systemd
+    integration comes in Phase 9.
+    """
+    from watchdog.observers import Observer
+
+    from navigator.watcher_handler import (
+        DebouncedHandler,
+        SelfTriggerGuard,
+        make_trigger_callback,
+    )
+
+    manager = WatcherManager(config)
+    watchers = manager.get_active_watchers()
+
+    if not watchers:
+        logger.info("No active watchers found. Nothing to monitor.")
+        return
+
+    observer = Observer()
+
+    for watcher in watchers:
+        guard = SelfTriggerGuard()
+        callback = make_trigger_callback(watcher, config, guard)
+        handler = DebouncedHandler(
+            callback=callback,
+            debounce_seconds=watcher.debounce_ms / 1000.0,
+            patterns=watcher.patterns,
+            ignore_patterns=watcher.ignore_patterns,
+        )
+        observer.schedule(handler, str(watcher.watch_path), recursive=watcher.recursive)
+        logger.info(
+            "Watching %s for command '%s'", watcher.watch_path, watcher.command_name
+        )
+
+    observer.start()
+    logger.info(
+        "Watcher daemon started. Monitoring %d watcher(s). Press Ctrl+C to stop.",
+        len(watchers),
+    )
+
+    try:
+        while observer.is_alive():
+            observer.join(timeout=1)
+    except KeyboardInterrupt:
+        logger.info("Shutting down watcher daemon...")
+        observer.stop()
+
+    observer.join()
+
+
 class WatcherManager:
     """Manages watcher CRUD operations against the SQLite database.
 
