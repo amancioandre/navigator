@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 08-01-PLAN.md
-last_updated: "2026-03-24T20:27:15.624Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 08-02-PLAN.md
+last_updated: "2026-03-24T20:31:09.888Z"
 progress:
   total_phases: 10
-  completed_phases: 7
+  completed_phases: 8
   total_plans: 16
-  completed_plans: 15
+  completed_plans: 16
 ---
 
 # Project State
@@ -61,6 +61,7 @@ Plan: 2 of 2
 | Phase 07 P01 | 3min | 2 tasks | 4 files |
 | Phase 07 P02 | 3min | 2 tasks | 2 files |
 | Phase 08 P01 | 3min | 2 tasks | 7 files |
+| Phase 08 P02 | 2min | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -95,6 +96,8 @@ Recent decisions affecting current work:
 - [Phase 07]: Qualified name parsing at exec/show entry points; DB stores bare names
 - [Phase 08]: extra_env parameter on build_clean_env/execute_command for NAVIGATOR_CHAIN_ID injection
 - [Phase 08]: detect_cycle walks from to_name following chain_next to find from_name for cycle detection
+- [Phase 08]: Direct SQL for clearing chain_next NULL (update_command filters None)
+- [Phase 08]: Exec dispatches to execute_chain when chain_next set, preserving single-command path
 
 ### Pending Todos
 
@@ -106,6 +109,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T20:27:15.622Z
-Stopped at: Completed 08-01-PLAN.md
+Last session: 2026-03-24T20:31:09.886Z
+Stopped at: Completed 08-02-PLAN.md
 Resume file: None

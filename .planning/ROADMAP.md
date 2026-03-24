@@ -19,7 +19,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 5: Cron Scheduling** - Schedule commands via real system crontab with lock-safe writes
 - [x] **Phase 6: File Watching** - Trigger commands on filesystem changes with debounce and guards (completed 2026-03-24)
 - [ ] **Phase 7: Namespacing** - Multi-project command isolation with per-namespace secrets
-- [ ] **Phase 8: Command Chaining** - Sequential command triggers with depth limits and cycle detection
+- [x] **Phase 8: Command Chaining** - Sequential command triggers with depth limits and cycle detection (completed 2026-03-24)
 - [ ] **Phase 9: Daemon and systemd** - Persistent watcher daemon and systemd service installation
 - [ ] **Phase 10: Operational Polish** - Health checks, JSON output, and dry-run for Claude Code agents
 
@@ -140,7 +140,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 08-01-PLAN.md — Chain data model (chain_next, on_failure_continue columns), chainer module with cycle detection, depth limits, and chain execution engine
-- [ ] 08-02-PLAN.md — Wire chain CLI command (--next, --show, --remove, --on-failure), update exec to follow chains, integration tests
+- [x] 08-02-PLAN.md — Wire chain CLI command (--next, --show, --remove, --on-failure), update exec to follow chains, integration tests
 
 ### Phase 9: Daemon and systemd
 **Goal**: File watchers and future services survive reboots as systemd-managed daemons
@@ -178,6 +178,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 5. Cron Scheduling | 0/2 | Planning | - |
 | 6. File Watching | 2/2 | Complete   | 2026-03-24 |
 | 7. Namespacing | 1/2 | In Progress|  |
-| 8. Command Chaining | 0/2 | Planning | - |
+| 8. Command Chaining | 2/2 | Complete   | 2026-03-24 |
 | 9. Daemon and systemd | 0/TBD | Not started | - |
 | 10. Operational Polish | 0/TBD | Not started | - |
