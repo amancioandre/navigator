@@ -96,7 +96,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 05-01-PLAN.md -- CrontabManager module with file locking, scheduler tests, python-crontab dependency
-- [ ] 05-02-PLAN.md -- Wire schedule CLI command (--cron, --remove, --list) with integration tests
+- [x] 05-02-PLAN.md -- Wire schedule CLI command (--cron, --remove, --list) with integration tests
 
 ### Phase 6: File Watching
 **Goal**: Commands can be triggered by filesystem changes with proper debounce and safety guards
