@@ -12,7 +12,9 @@ Autonomous task orchestration — registered commands run on schedule or on file
 
 ### Validated
 
-(None yet — ship to validate)
+- ✓ Globally installed via pip/uv (`navigator` CLI on PATH) — Phase 1
+- ✓ Configuration file at `~/.config/navigator/config.toml` — Phase 1
+- ✓ Absolute path resolution at registration time — Phase 1
 
 ### Active
 
@@ -86,4 +88,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-23 after initialization*
+*Last updated: 2026-03-24 after Phase 1 completion*
