@@ -23,9 +23,9 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - ✓ Pre-configured Claude Code permissions (`--allowedTools`) per registered command — Phase 3
 - ✓ Retry with backoff (`--retries N`) on failure — Phase 4
 - ✓ Cron-based scheduling via system crontab — Navigator reads and manages real crontab entries — Phase 5
+- ✓ File/folder watching as a trigger pattern (inotify via watchdog), with debounce, self-trigger guard, time-window constraints, and ignore patterns — Phase 6
 
 ### Active
-- [ ] File/folder watching as a trigger pattern (periodic polling or inotify), with optional time-window constraints
 - [ ] Command chaining — commands can trigger other registered commands, running as separate sessions with shared files/state
 - [ ] Multi-project namespacing — commands are namespaced by project, cross-namespace chaining supported
 - [ ] Push notifications on failure via messaging bot
@@ -88,4 +88,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after Phase 5 completion*
+*Last updated: 2026-03-24 after Phase 6 completion*
