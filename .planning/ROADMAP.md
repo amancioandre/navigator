@@ -125,7 +125,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 07-01-PLAN.md — Namespace model, DB schema + CRUD, qualified name parser, per-namespace secrets resolution
-- [ ] 07-02-PLAN.md — Namespace CLI subcommand group, update register/exec/show for qualified names
+- [x] 07-02-PLAN.md — Namespace CLI subcommand group, update register/exec/show for qualified names
 
 ### Phase 8: Command Chaining
 **Goal**: Completing one command can automatically trigger the next with shared state and safety limits
