@@ -21,7 +21,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [ ] **Phase 7: Namespacing** - Multi-project command isolation with per-namespace secrets
 - [x] **Phase 8: Command Chaining** - Sequential command triggers with depth limits and cycle detection (completed 2026-03-24)
 - [ ] **Phase 9: Daemon and systemd** - Persistent watcher daemon and systemd service installation
-- [ ] **Phase 10: Operational Polish** - Health checks, JSON output, and dry-run for Claude Code agents
+- [x] **Phase 10: Operational Polish** - Health checks, JSON output, and dry-run for Claude Code agents (completed 2026-03-24)
 
 ## Phase Details
 
@@ -167,7 +167,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 10-01-PLAN.md — JSON output infrastructure (--output json global flag) and --dry-run on exec
-- [ ] 10-02-PLAN.md — Doctor command with health checks, --fix auto-repair, and JSON output
+- [x] 10-02-PLAN.md — Doctor command with health checks, --fix auto-repair, and JSON output
 
 ## Progress
 
@@ -186,4 +186,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 7. Namespacing | 1/2 | In Progress|  |
 | 8. Command Chaining | 2/2 | Complete   | 2026-03-24 |
 | 9. Daemon and systemd | 0/2 | Planning | - |
-| 10. Operational Polish | 1/2 | In Progress|  |
+| 10. Operational Polish | 2/2 | Complete   | 2026-03-24 |

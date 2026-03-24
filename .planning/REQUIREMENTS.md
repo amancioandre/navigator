@@ -70,7 +70,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 - [x] **INFRA-01**: Navigator installs globally via pip/uv (`navigator` CLI on PATH)
 - [x] **INFRA-02**: systemd user services for watcher daemon and future bot listener
-- [ ] **INFRA-03**: `navigator doctor` verifies crontab entries, paths, permissions, and service health
+- [x] **INFRA-03**: `navigator doctor` verifies crontab entries, paths, permissions, and service health
 - [x] **INFRA-04**: `navigator --output json` provides machine-readable output for Claude Code agents
 - [x] **INFRA-05**: Configuration file at `~/.config/navigator/config.toml`
 - [x] **INFRA-06**: `navigator install-service` generates and installs systemd unit files
@@ -160,7 +160,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | NS-04 | Phase 7 | Complete |
 | INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 9 | Complete |
-| INFRA-03 | Phase 10 | Pending |
+| INFRA-03 | Phase 10 | Complete |
 | INFRA-04 | Phase 10 | Complete |
 | INFRA-05 | Phase 1 | Complete |
 | INFRA-06 | Phase 9 | Complete |
