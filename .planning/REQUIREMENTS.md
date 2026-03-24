@@ -61,10 +61,10 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Namespacing
 
-- [ ] **NS-01**: Commands are namespaced by project (`namespace:command` format)
-- [ ] **NS-02**: User can create, list, and delete namespaces
+- [x] **NS-01**: Commands are namespaced by project (`namespace:command` format)
+- [x] **NS-02**: User can create, list, and delete namespaces
 - [ ] **NS-03**: Commands can chain across namespaces (e.g., `gamescout:scrape` triggers `content:generate`)
-- [ ] **NS-04**: Secrets are isolated per namespace (`~/.secrets/<namespace>/`)
+- [x] **NS-04**: Secrets are isolated per namespace (`~/.secrets/<namespace>/`)
 
 ### Infrastructure
 
@@ -154,10 +154,10 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHAIN-04 | Phase 8 | Pending |
 | CHAIN-05 | Phase 8 | Pending |
 | CHAIN-06 | Phase 8 | Pending |
-| NS-01 | Phase 7 | Pending |
-| NS-02 | Phase 7 | Pending |
+| NS-01 | Phase 7 | Complete |
+| NS-02 | Phase 7 | Complete |
 | NS-03 | Phase 7 | Pending |
-| NS-04 | Phase 7 | Pending |
+| NS-04 | Phase 7 | Complete |
 | INFRA-01 | Phase 1 | Complete |
 | INFRA-02 | Phase 9 | Pending |
 | INFRA-03 | Phase 10 | Pending |
