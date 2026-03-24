@@ -24,21 +24,13 @@ def app() -> typer.Typer:
 def tmp_config_dir(tmp_path, monkeypatch):
     """Create isolated config and data directories for testing.
 
-    Monkeypatches navigator.config path functions to use temp directories.
-    These functions will exist after Plan 02 — this fixture is ready for them.
+    Monkeypatches navigator.config path functions to use temp directories,
+    ensuring tests never touch the real ~/.config/navigator/.
     """
     config_dir = tmp_path / "config"
-    config_dir.mkdir()
     data_dir = tmp_path / "data"
-    data_dir.mkdir()
 
-    try:
-        import navigator.config
-
-        monkeypatch.setattr(navigator.config, "get_config_dir", lambda: config_dir)
-        monkeypatch.setattr(navigator.config, "get_data_dir", lambda: data_dir)
-    except (ImportError, AttributeError):
-        # navigator.config does not exist yet (Plan 02)
-        pass
+    monkeypatch.setattr("navigator.config.get_config_dir", lambda: config_dir)
+    monkeypatch.setattr("navigator.config.get_data_dir", lambda: data_dir)
 
     return {"config_dir": config_dir, "data_dir": data_dir}
