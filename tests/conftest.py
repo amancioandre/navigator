@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 import typer.testing
 
@@ -34,3 +36,27 @@ def tmp_config_dir(tmp_path, monkeypatch):
     monkeypatch.setattr("navigator.config.get_data_dir", lambda: data_dir)
 
     return {"config_dir": config_dir, "data_dir": data_dir}
+
+
+@pytest.fixture()
+def db_conn(tmp_path):
+    """In-memory-like SQLite connection using temp file."""
+    from navigator.db import get_connection, init_db
+
+    db_path = tmp_path / "test_registry.db"
+    conn = get_connection(db_path)
+    init_db(conn)
+    yield conn
+    conn.close()
+
+
+@pytest.fixture()
+def sample_command():
+    """A valid Command instance for testing."""
+    from navigator.models import Command
+
+    return Command(
+        name="test-cmd",
+        prompt="Run tests",
+        environment=Path("/tmp/test-project"),
+    )
