@@ -1289,6 +1289,53 @@ def service(
 
 
 @app.command()
-def doctor() -> None:
+def doctor(
+    fix: Annotated[
+        bool,
+        typer.Option("--fix", help="Apply safe auto-fixes for common issues"),
+    ] = False,
+) -> None:
     """Verify system health."""
-    typer.echo("doctor: not yet implemented")
+    from navigator.config import load_config
+    from navigator.doctor import run_doctor
+    from navigator.output import is_json, json_response
+
+    config = load_config()
+    result = run_doctor(config, fix=fix)
+
+    if is_json():
+        data = {
+            "checks": [
+                {
+                    "name": c.name,
+                    "status": c.status,
+                    "message": c.message,
+                    "fixable": c.fixable,
+                    "fixed": c.fixed,
+                }
+                for c in result.checks
+            ],
+            "summary": result.summary,
+        }
+        typer.echo(json_response("ok", data))
+    else:
+        status_icons = {
+            "pass": "[green]PASS[/green]",
+            "fail": "[red]FAIL[/red]",
+            "warn": "[yellow]WARN[/yellow]",
+        }
+        for check in result.checks:
+            icon = status_icons.get(check.status, check.status)
+            fixed_tag = " [green](fixed)[/green]" if check.fixed else ""
+            console.print(f"  {icon}  {check.name}: {check.message}{fixed_tag}")
+
+        s = result.summary
+        console.print(
+            f"\n[bold]{s['total']} checks:[/bold] "
+            f"[green]{s['passed']} passed[/green], "
+            f"[red]{s['failed']} failed[/red], "
+            f"[yellow]{s['warned']} warned[/yellow]"
+        )
+
+    if result.summary["failed"] > 0:
+        raise typer.Exit(code=1)

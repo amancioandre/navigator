@@ -1287,3 +1287,88 @@ class TestDryRun:
         result = cli_runner.invoke(app, ["exec", "paused-cmd", "--dry-run"])
         assert result.exit_code == 1
         assert "paused" in result.output
+
+
+# === Phase 10 tests — doctor command ===
+
+
+class TestDoctor:
+    def test_doctor_healthy_system(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """navigator doctor with healthy system exits 0 and shows PASS."""
+        from unittest.mock import MagicMock
+
+        from navigator.doctor import CheckResult, DoctorResult
+
+        mock_result = DoctorResult(
+            checks=[
+                CheckResult(name="Database", status="pass", message="Database OK (3 commands)"),
+                CheckResult(name="Navigator binary", status="pass", message="Found at /usr/bin/navigator"),
+                CheckResult(name="Registered paths", status="pass", message="All paths exist"),
+            ]
+        )
+
+        monkeypatch.setattr("navigator.doctor.run_doctor", lambda config, fix=False: mock_result)
+        result = cli_runner.invoke(app, ["doctor"])
+        assert result.exit_code == 0
+        assert "PASS" in result.output
+
+    def test_doctor_with_failures(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """navigator doctor with failures exits 1."""
+        from navigator.doctor import CheckResult, DoctorResult
+
+        mock_result = DoctorResult(
+            checks=[
+                CheckResult(name="Database", status="fail", message="Database error"),
+                CheckResult(name="Binary", status="pass", message="OK"),
+            ]
+        )
+
+        monkeypatch.setattr("navigator.doctor.run_doctor", lambda config, fix=False: mock_result)
+        result = cli_runner.invoke(app, ["doctor"])
+        assert result.exit_code == 1
+        assert "FAIL" in result.output
+
+    def test_doctor_fix_flag(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """navigator doctor --fix passes fix=True to run_doctor."""
+        from navigator.doctor import CheckResult, DoctorResult
+
+        called_with_fix = {}
+
+        def mock_run_doctor(config, fix=False):
+            called_with_fix["fix"] = fix
+            return DoctorResult(
+                checks=[
+                    CheckResult(name="Log dir", status="warn", message="Missing", fixable=True, fixed=True),
+                ]
+            )
+
+        monkeypatch.setattr("navigator.doctor.run_doctor", mock_run_doctor)
+        result = cli_runner.invoke(app, ["doctor", "--fix"])
+        assert result.exit_code == 0
+        assert called_with_fix["fix"] is True
+        assert "fixed" in result.output.lower()
+
+    def test_doctor_json_output(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """navigator --output json doctor returns valid JSON with checks and summary."""
+        import json
+
+        from navigator.doctor import CheckResult, DoctorResult
+
+        mock_result = DoctorResult(
+            checks=[
+                CheckResult(name="Database", status="pass", message="OK"),
+                CheckResult(name="Binary", status="pass", message="Found"),
+            ]
+        )
+
+        monkeypatch.setattr("navigator.doctor.run_doctor", lambda config, fix=False: mock_result)
+        result = cli_runner.invoke(app, ["--output", "json", "doctor"])
+        assert result.exit_code == 0
+
+        data = json.loads(result.output)
+        assert data["status"] == "ok"
+        assert "checks" in data["data"]
+        assert "summary" in data["data"]
+        assert len(data["data"]["checks"]) == 2
+        assert data["data"]["summary"]["total"] == 2
+        assert data["data"]["summary"]["passed"] == 2
