@@ -252,3 +252,95 @@ def test_resume_nonexistent(cli_runner, app, tmp_config_dir):
     result = cli_runner.invoke(app, ["resume", "ghost-cmd"])
     assert result.exit_code == 1
     assert "not found" in result.output
+
+
+# === Phase 3 tests — exec subcommand ===
+
+
+def test_exec_command_not_found(cli_runner, app, tmp_config_dir):
+    """Exec nonexistent command exits 1 and prints 'not found'."""
+    result = cli_runner.invoke(app, ["exec", "nonexistent"])
+    assert result.exit_code == 1
+    assert "not found" in result.output
+
+
+def test_exec_paused_command(cli_runner, app, tmp_config_dir):
+    """Exec paused command exits 1 with actionable message."""
+    cli_runner.invoke(app, ["register", "paused-cmd", "--prompt", "do stuff"])
+    cli_runner.invoke(app, ["pause", "paused-cmd"])
+    result = cli_runner.invoke(app, ["exec", "paused-cmd"])
+    assert result.exit_code == 1
+    assert "is paused" in result.output
+    assert "navigator resume" in result.output
+
+
+def test_exec_paused_exit_code(cli_runner, app, tmp_config_dir):
+    """Exec paused command returns exactly exit code 1 (D-14)."""
+    cli_runner.invoke(app, ["register", "paused-cmd", "--prompt", "do stuff"])
+    cli_runner.invoke(app, ["pause", "paused-cmd"])
+    result = cli_runner.invoke(app, ["exec", "paused-cmd"])
+    assert result.exit_code == 1
+
+
+def test_exec_active_command(cli_runner, app, tmp_config_dir, monkeypatch):
+    """Exec active command calls execute_command and prints stdout."""
+    import subprocess
+
+    cli_runner.invoke(app, [
+        "register", "my-cmd", "--prompt", "do stuff",
+        "--environment", "/tmp",
+    ])
+
+    mock_result = subprocess.CompletedProcess(
+        args=["claude"], returncode=0, stdout="Success output", stderr=""
+    )
+    monkeypatch.setattr(
+        "navigator.executor.subprocess.run", lambda *a, **kw: mock_result
+    )
+    monkeypatch.setattr(
+        "navigator.executor.shutil.which", lambda cmd: "/usr/bin/claude"
+    )
+
+    result = cli_runner.invoke(app, ["exec", "my-cmd"])
+    assert result.exit_code == 0
+    assert "Success output" in result.output
+
+
+def test_exec_command_nonzero_exit(cli_runner, app, tmp_config_dir, monkeypatch):
+    """Exec command with nonzero exit reports exit code and stderr."""
+    import subprocess
+
+    cli_runner.invoke(app, [
+        "register", "fail-cmd", "--prompt", "do stuff",
+        "--environment", "/tmp",
+    ])
+
+    mock_result = subprocess.CompletedProcess(
+        args=["claude"], returncode=1, stdout="", stderr="Error details"
+    )
+    monkeypatch.setattr(
+        "navigator.executor.subprocess.run", lambda *a, **kw: mock_result
+    )
+    monkeypatch.setattr(
+        "navigator.executor.shutil.which", lambda cmd: "/usr/bin/claude"
+    )
+
+    result = cli_runner.invoke(app, ["exec", "fail-cmd"])
+    assert result.exit_code == 1
+    assert "exited with code 1" in result.output
+
+
+def test_exec_claude_not_found(cli_runner, app, tmp_config_dir, monkeypatch):
+    """Exec when claude CLI not on PATH exits 1 with helpful error."""
+    cli_runner.invoke(app, [
+        "register", "my-cmd", "--prompt", "do stuff",
+        "--environment", "/tmp",
+    ])
+
+    monkeypatch.setattr(
+        "navigator.executor.shutil.which", lambda cmd: None
+    )
+
+    result = cli_runner.invoke(app, ["exec", "my-cmd"])
+    assert result.exit_code == 1
+    assert "claude CLI not found" in result.output
