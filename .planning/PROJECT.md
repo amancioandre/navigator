@@ -25,9 +25,10 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - ✓ Cron-based scheduling via system crontab — Navigator reads and manages real crontab entries — Phase 5
 - ✓ File/folder watching as a trigger pattern (inotify via watchdog), with debounce, self-trigger guard, time-window constraints, and ignore patterns — Phase 6
 
+- ✓ Multi-project namespacing — commands namespaced by project with isolated secrets and cross-namespace references — Phase 7
+
 ### Active
 - [ ] Command chaining — commands can trigger other registered commands, running as separate sessions with shared files/state
-- [ ] Multi-project namespacing — commands are namespaced by project, cross-namespace chaining supported
 - [ ] Push notifications on failure via messaging bot
 - [ ] Remote CLI via private messaging bot (Telegram/Discord) — full CRUD, long-polling, never exposed publicly
 - [ ] Survives reboots — runs as a systemd service (watcher daemon + bot listener)
@@ -88,4 +89,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after Phase 6 completion*
+*Last updated: 2026-03-24 after Phase 7 completion*
