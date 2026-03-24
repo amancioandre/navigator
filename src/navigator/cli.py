@@ -20,6 +20,13 @@ app = typer.Typer(
 
 console = Console()
 
+namespace_app = typer.Typer(
+    name="namespace",
+    help="Manage namespaces.",
+    no_args_is_help=True,
+)
+app.add_typer(namespace_app)
+
 
 def version_callback(value: bool) -> None:
     if value:
@@ -35,6 +42,119 @@ def main(
     ] = None,
 ) -> None:
     """Autonomous task orchestrator for Claude Code sessions."""
+
+
+# --- Namespace subcommands ---
+
+
+@namespace_app.command()
+def create(
+    name: Annotated[
+        str, typer.Argument(help="Namespace name (lowercase, hyphens allowed)")
+    ],
+    description: Annotated[
+        str | None,
+        typer.Option("--description", "-d", help="Namespace description"),
+    ] = None,
+) -> None:
+    """Create a new namespace."""
+    from navigator.config import load_config
+    from navigator.db import get_connection, get_namespace_by_name, init_db, insert_namespace
+    from navigator.models import Namespace
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        if get_namespace_by_name(conn, name) is not None:
+            console.print(f"[red]Namespace '{name}' already exists.[/red]")
+            raise typer.Exit(code=1)
+
+        try:
+            ns = Namespace(name=name, description=description)
+        except Exception:
+            console.print(f"[red]Invalid namespace name '{name}'[/red]")
+            raise typer.Exit(code=1) from None
+
+        insert_namespace(conn, ns)
+        console.print(f"[green]Created namespace '{name}'[/green]")
+    finally:
+        conn.close()
+
+
+@namespace_app.command(name="list")
+def list_namespaces() -> None:
+    """List all namespaces with command counts."""
+    from navigator.config import load_config
+    from navigator.db import get_all_commands, get_all_namespaces, get_connection, init_db
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        namespaces = get_all_namespaces(conn)
+        if not namespaces:
+            console.print("[dim]No namespaces found.[/dim]")
+            return
+
+        table = Table(title="Namespaces")
+        table.add_column("Name", style="cyan")
+        table.add_column("Commands")
+        table.add_column("Description", style="dim")
+        table.add_column("Created", style="dim")
+
+        for ns in namespaces:
+            cmds = get_all_commands(conn, namespace=ns.name)
+            table.add_row(
+                ns.name,
+                str(len(cmds)),
+                ns.description or "",
+                ns.created_at,
+            )
+
+        console.print(table)
+    finally:
+        conn.close()
+
+
+@namespace_app.command(name="delete")
+def delete_namespace_cmd(
+    name: Annotated[
+        str, typer.Argument(help="Namespace name to delete")
+    ],
+    force: Annotated[
+        bool,
+        typer.Option("--force", "-f", help="Force delete even if commands exist"),
+    ] = False,
+) -> None:
+    """Delete a namespace."""
+    if name == "default":
+        console.print("[red]Cannot delete the 'default' namespace.[/red]")
+        raise typer.Exit(code=1)
+
+    from navigator.config import load_config
+    from navigator.db import delete_namespace, get_connection, init_db
+
+    config = load_config()
+    conn = get_connection(config.db_path)
+    try:
+        init_db(conn)
+        try:
+            rows = delete_namespace(conn, name, force=force)
+        except ValueError as exc:
+            console.print(f"[red]{exc}. Use --force to delete anyway.[/red]")
+            raise typer.Exit(code=1) from None
+
+        if rows == 0:
+            console.print(f"[red]Namespace '{name}' not found.[/red]")
+            raise typer.Exit(code=1)
+
+        console.print(f"[green]Deleted namespace '{name}'[/green]")
+    finally:
+        conn.close()
+
+
+# --- Command subcommands ---
 
 
 @app.command()

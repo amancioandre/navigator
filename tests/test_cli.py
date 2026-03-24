@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-SUBCOMMANDS = ["register", "list", "exec", "schedule", "watch", "chain", "logs", "doctor"]
+SUBCOMMANDS = ["register", "list", "exec", "schedule", "watch", "chain", "logs", "doctor", "namespace"]
 
 
 # === Phase 1 tests (INFRA-01) ===
@@ -756,3 +756,51 @@ class TestWatch:
         result = cli_runner.invoke(app, ["watch", "test-cmd"])
         assert result.exit_code == 1
         assert "Use --path" in result.output
+
+
+# === Phase 7 tests — namespace subcommand ===
+
+
+def test_namespace_create(cli_runner, app, tmp_config_dir):
+    """Create a namespace exits 0 and prints confirmation."""
+    result = cli_runner.invoke(app, ["namespace", "create", "myproject"])
+    assert result.exit_code == 0
+    assert "Created namespace" in result.output
+
+
+def test_namespace_create_duplicate(cli_runner, app, tmp_config_dir):
+    """Creating duplicate namespace exits 1."""
+    cli_runner.invoke(app, ["namespace", "create", "myproject"])
+    result = cli_runner.invoke(app, ["namespace", "create", "myproject"])
+    assert result.exit_code == 1
+    assert "already exists" in result.output
+
+
+def test_namespace_create_invalid_name(cli_runner, app, tmp_config_dir):
+    """Creating namespace with uppercase name exits 1."""
+    result = cli_runner.invoke(app, ["namespace", "create", "INVALID"])
+    assert result.exit_code == 1
+
+
+def test_namespace_list(cli_runner, app, tmp_config_dir):
+    """List namespaces shows at least 'default'."""
+    # Trigger DB init by creating a namespace (default is auto-created by init_db)
+    cli_runner.invoke(app, ["namespace", "create", "myproject"])
+    result = cli_runner.invoke(app, ["namespace", "list"])
+    assert result.exit_code == 0
+    assert "default" in result.output
+
+
+def test_namespace_delete_empty(cli_runner, app, tmp_config_dir):
+    """Create then delete empty namespace exits 0."""
+    cli_runner.invoke(app, ["namespace", "create", "myproject"])
+    result = cli_runner.invoke(app, ["namespace", "delete", "myproject"])
+    assert result.exit_code == 0
+    assert "Deleted namespace" in result.output
+
+
+def test_namespace_delete_default_rejected(cli_runner, app, tmp_config_dir):
+    """Deleting 'default' namespace exits 1."""
+    result = cli_runner.invoke(app, ["namespace", "delete", "default"])
+    assert result.exit_code == 1
+    assert "Cannot delete" in result.output
