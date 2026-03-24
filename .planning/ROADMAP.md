@@ -66,7 +66,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 03-01-PLAN.md — Secrets module, executor module with environment isolation, and unit tests
-- [ ] 03-02-PLAN.md — Wire exec CLI subcommand to executor with CLI integration tests
+- [x] 03-02-PLAN.md — Wire exec CLI subcommand to executor with CLI integration tests
 
 ### Phase 4: Execution Hardening
 **Goal**: Executions are robust with retry, logging, timeouts, and clean process lifecycle

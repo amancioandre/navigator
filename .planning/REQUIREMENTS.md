@@ -22,7 +22,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Execution
 
-- [ ] **EXEC-01**: User can run a registered command as a Claude Code subprocess with pre-configured `--allowedTools`
+- [x] **EXEC-01**: User can run a registered command as a Claude Code subprocess with pre-configured `--allowedTools`
 - [x] **EXEC-02**: Executor reads secrets from the command's secrets path and injects them as environment variables
 - [x] **EXEC-03**: Secrets are never logged, never passed as CLI arguments, and never visible in process tables
 - [ ] **EXEC-04**: Executor retries failed commands with exponential backoff (`--retries N`)
@@ -127,7 +127,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REG-08 | Phase 2 | Complete |
 | REG-09 | Phase 10 | Pending |
 | REG-10 | Phase 2 | Complete |
-| EXEC-01 | Phase 3 | Pending |
+| EXEC-01 | Phase 3 | Complete |
 | EXEC-02 | Phase 3 | Complete |
 | EXEC-03 | Phase 3 | Complete |
 | EXEC-04 | Phase 4 | Pending |
