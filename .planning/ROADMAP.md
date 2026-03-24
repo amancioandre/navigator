@@ -151,7 +151,10 @@ Plans:
   2. User can run `navigator install-service` to generate and install systemd unit files
   3. Service restarts automatically on failure
   4. Daemon survives reboots and resumes watching registered paths
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 09-01-PLAN.md — Service module with systemd unit generation, install/uninstall, systemctl wrapper, and unit tests
+- [ ] 09-02-PLAN.md — Wire daemon, install-service, uninstall-service, service CLI commands with integration tests
 
 ### Phase 10: Operational Polish
 **Goal**: Navigator is introspectable by humans and Claude Code agents with health checks and machine-readable output
@@ -179,5 +182,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 6. File Watching | 2/2 | Complete   | 2026-03-24 |
 | 7. Namespacing | 1/2 | In Progress|  |
 | 8. Command Chaining | 2/2 | Complete   | 2026-03-24 |
-| 9. Daemon and systemd | 0/TBD | Not started | - |
+| 9. Daemon and systemd | 0/2 | Planning | - |
 | 10. Operational Polish | 0/TBD | Not started | - |
