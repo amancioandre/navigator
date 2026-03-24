@@ -122,7 +122,10 @@ Plans:
   2. User can create, list, and delete namespaces
   3. Commands can reference commands in other namespaces
   4. Secrets are isolated per namespace under `~/.secrets/<namespace>/`
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 07-01-PLAN.md — Namespace model, DB schema + CRUD, qualified name parser, per-namespace secrets resolution
+- [ ] 07-02-PLAN.md — Namespace CLI subcommand group, update register/exec/show for qualified names
 
 ### Phase 8: Command Chaining
 **Goal**: Completing one command can automatically trigger the next with shared state and safety limits
@@ -171,7 +174,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 4. Execution Hardening | 0/2 | Planning | - |
 | 5. Cron Scheduling | 0/2 | Planning | - |
 | 6. File Watching | 2/2 | Complete   | 2026-03-24 |
-| 7. Namespacing | 0/TBD | Not started | - |
+| 7. Namespacing | 0/2 | Planned | - |
 | 8. Command Chaining | 0/TBD | Not started | - |
 | 9. Daemon and systemd | 0/TBD | Not started | - |
 | 10. Operational Polish | 0/TBD | Not started | - |
