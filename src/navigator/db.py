@@ -10,7 +10,7 @@ import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
 
-from navigator.models import Command, CommandStatus, Watcher, WatcherStatus
+from navigator.models import Command, CommandStatus, Namespace, Watcher, WatcherStatus
 
 _CREATE_TABLE = """\
 CREATE TABLE IF NOT EXISTS commands (
@@ -24,6 +24,14 @@ CREATE TABLE IF NOT EXISTS commands (
     status TEXT NOT NULL DEFAULT 'active',
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
+)
+"""
+
+_CREATE_NAMESPACES_TABLE = """\
+CREATE TABLE IF NOT EXISTS namespaces (
+    name TEXT PRIMARY KEY,
+    description TEXT,
+    created_at TEXT NOT NULL
 )
 """
 
@@ -78,14 +86,19 @@ def get_connection(db_path: Path) -> sqlite3.Connection:
 
 
 def init_db(conn: sqlite3.Connection) -> None:
-    """Create the commands and watchers tables and indexes if they don't exist."""
+    """Create the commands, namespaces, and watchers tables and indexes if they don't exist."""
     with conn:
+        conn.execute(_CREATE_NAMESPACES_TABLE)
         conn.execute(_CREATE_TABLE)
         conn.execute(_CREATE_INDEX_NAMESPACE)
         conn.execute(_CREATE_INDEX_CREATED)
         conn.execute(_CREATE_WATCHERS_TABLE)
         conn.execute(_CREATE_INDEX_WATCHERS_COMMAND)
         conn.execute(_CREATE_INDEX_WATCHERS_STATUS)
+        conn.execute(
+            "INSERT OR IGNORE INTO namespaces (name, description, created_at) VALUES (?, ?, ?)",
+            ("default", "Default namespace", datetime.now(UTC).isoformat()),
+        )
 
 
 def insert_command(conn: sqlite3.Connection, cmd: Command) -> None:
@@ -281,4 +294,64 @@ def row_to_watcher(row: sqlite3.Row) -> Watcher:
         status=WatcherStatus(row["status"]),
         created_at=row["created_at"],
         updated_at=row["updated_at"],
+    )
+
+
+# --- Namespace CRUD ---
+
+
+def insert_namespace(conn: sqlite3.Connection, ns: Namespace) -> None:
+    """Insert a namespace into the database atomically."""
+    with conn:
+        conn.execute(
+            "INSERT INTO namespaces (name, description, created_at) VALUES (?, ?, ?)",
+            (ns.name, ns.description, ns.created_at),
+        )
+
+
+def get_all_namespaces(conn: sqlite3.Connection) -> list[Namespace]:
+    """Retrieve all namespaces."""
+    rows = conn.execute("SELECT * FROM namespaces").fetchall()
+    return [row_to_namespace(row) for row in rows]
+
+
+def get_namespace_by_name(conn: sqlite3.Connection, name: str) -> Namespace | None:
+    """Retrieve a namespace by name, or None if not found."""
+    row = conn.execute(
+        "SELECT * FROM namespaces WHERE name = ?", (name,)
+    ).fetchone()
+    if row is None:
+        return None
+    return row_to_namespace(row)
+
+
+def delete_namespace(conn: sqlite3.Connection, name: str, force: bool = False) -> int:
+    """Delete a namespace by name.
+
+    If force=False (default), raises ValueError if commands exist in the namespace.
+    If force=True, deletes all commands in the namespace first (cascade), then deletes.
+    Returns number of rows affected (0 or 1).
+    """
+    # Check for commands in this namespace
+    cmd_count = conn.execute(
+        "SELECT COUNT(*) FROM commands WHERE namespace = ?", (name,)
+    ).fetchone()[0]
+
+    if cmd_count > 0 and not force:
+        msg = f"Cannot delete namespace '{name}': {cmd_count} commands exist in this namespace"
+        raise ValueError(msg)
+
+    with conn:
+        if force and cmd_count > 0:
+            conn.execute("DELETE FROM commands WHERE namespace = ?", (name,))
+        cursor = conn.execute("DELETE FROM namespaces WHERE name = ?", (name,))
+        return cursor.rowcount
+
+
+def row_to_namespace(row: sqlite3.Row) -> Namespace:
+    """Deserialize a database row into a Namespace model."""
+    return Namespace(
+        name=row["name"],
+        description=row["description"],
+        created_at=row["created_at"],
     )

@@ -10,6 +10,8 @@ from pathlib import Path
 
 from pydantic import BaseModel, Field, field_validator
 
+_NAME_PATTERN = r"^[a-z0-9][a-z0-9-]*$"
+
 
 class CommandStatus(StrEnum):
     """Status of a registered command."""
@@ -47,9 +49,33 @@ class Command(BaseModel):
     @classmethod
     def validate_name(cls, v: str) -> str:
         """Enforce lowercase alphanumeric with hyphens, no leading hyphen."""
-        if not re.match(r"^[a-z0-9][a-z0-9-]*$", v):
+        if not re.match(_NAME_PATTERN, v):
             msg = (
                 f"Invalid command name '{v}': must match ^[a-z0-9][a-z0-9-]*$ "
+                "(lowercase alphanumeric, hyphens allowed, no leading hyphen)"
+            )
+            raise ValueError(msg)
+        return v
+
+
+class Namespace(BaseModel):
+    """A namespace for grouping commands by project.
+
+    Validates namespace names against the same pattern as Command names:
+    lowercase alphanumeric with hyphens, no leading hyphen.
+    """
+
+    name: str
+    description: str | None = None
+    created_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        """Enforce lowercase alphanumeric with hyphens, no leading hyphen."""
+        if not re.match(_NAME_PATTERN, v):
+            msg = (
+                f"Invalid namespace name '{v}': must match {_NAME_PATTERN} "
                 "(lowercase alphanumeric, hyphens allowed, no leading hyphen)"
             )
             raise ValueError(msg)
