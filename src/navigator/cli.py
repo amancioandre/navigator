@@ -538,6 +538,44 @@ def exec_command(
             )
             raise typer.Exit(code=1)
 
+        # Chain execution: if command has chain_next, run entire chain
+        if cmd.chain_next is not None:
+            from navigator.chainer import execute_chain
+
+            try:
+                chain_result = execute_chain(conn, cmd, config)
+            except (FileNotFoundError, ValueError) as e:
+                console.print(f"[red]{e}[/red]")
+                raise typer.Exit(code=1) from None
+
+            console.print(f"[dim]Chain ID: {chain_result.correlation_id}[/dim]")
+            for i, step_result in enumerate(chain_result.results, 1):
+                if step_result.returncode == 0:
+                    console.print(
+                        f"  [green]Step {i}: {step_result.command_name} "
+                        f"(exit 0)[/green]"
+                    )
+                else:
+                    console.print(
+                        f"  [red]Step {i}: {step_result.command_name} "
+                        f"(exit {step_result.returncode})[/red]"
+                    )
+            console.print(
+                f"[dim]{chain_result.steps_run}/{chain_result.total_steps} "
+                f"steps completed[/dim]"
+            )
+
+            if not chain_result.success:
+                # Find last non-zero return code
+                last_code = 1
+                for r in reversed(chain_result.results):
+                    if r.returncode != 0:
+                        last_code = r.returncode
+                        break
+                raise typer.Exit(code=last_code)
+            return
+
+        # Single command execution (no chain)
         try:
             result = execute_command(
                 cmd, config, timeout_override=timeout, retries_override=retries

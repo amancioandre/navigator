@@ -895,3 +895,138 @@ def test_show_qualified_name(cli_runner, app, tmp_config_dir):
     assert result.exit_code == 0
     assert "my-cmd" in result.output
     assert "do stuff" in result.output
+
+
+# === Phase 8 tests — chain subcommand ===
+
+
+class TestChain:
+    """Tests for navigator chain command."""
+
+    def _register_two(self, cli_runner, app):
+        """Helper: register two commands for chaining."""
+        cli_runner.invoke(app, [
+            "register", "cmd-a", "--prompt", "do A", "--environment", "/tmp",
+        ])
+        cli_runner.invoke(app, [
+            "register", "cmd-b", "--prompt", "do B", "--environment", "/tmp",
+        ])
+
+    def test_chain_link_commands(self, cli_runner, app, tmp_config_dir):
+        """Chain two commands with --next succeeds."""
+        self._register_two(cli_runner, app)
+        result = cli_runner.invoke(app, ["chain", "cmd-a", "--next", "cmd-b"])
+        assert result.exit_code == 0
+        assert "Chained" in result.output
+        assert "cmd-a" in result.output
+        assert "cmd-b" in result.output
+
+    def test_chain_show(self, cli_runner, app, tmp_config_dir):
+        """Chain --show displays arrow diagram."""
+        self._register_two(cli_runner, app)
+        cli_runner.invoke(app, ["chain", "cmd-a", "--next", "cmd-b"])
+        result = cli_runner.invoke(app, ["chain", "cmd-a", "--show"])
+        assert result.exit_code == 0
+        assert "->" in result.output
+        assert "cmd-a" in result.output
+        assert "cmd-b" in result.output
+
+    def test_chain_remove(self, cli_runner, app, tmp_config_dir):
+        """Chain --remove unlinks commands."""
+        self._register_two(cli_runner, app)
+        cli_runner.invoke(app, ["chain", "cmd-a", "--next", "cmd-b"])
+        result = cli_runner.invoke(app, ["chain", "cmd-a", "--remove"])
+        assert result.exit_code == 0
+        assert "Removed chain link" in result.output
+
+    def test_chain_cycle_rejected(self, cli_runner, app, tmp_config_dir):
+        """Cycle detection rejects A->B->A."""
+        self._register_two(cli_runner, app)
+        cli_runner.invoke(app, ["chain", "cmd-a", "--next", "cmd-b"])
+        result = cli_runner.invoke(app, ["chain", "cmd-b", "--next", "cmd-a"])
+        assert result.exit_code == 1
+        assert "Cycle detected" in result.output
+
+    def test_chain_nonexistent_command(self, cli_runner, app, tmp_config_dir):
+        """Chain to nonexistent command exits 1."""
+        cli_runner.invoke(app, [
+            "register", "cmd-a", "--prompt", "do A", "--environment", "/tmp",
+        ])
+        result = cli_runner.invoke(app, ["chain", "cmd-a", "--next", "ghost"])
+        assert result.exit_code == 1
+        assert "not found" in result.output
+
+    def test_chain_on_failure_continue(self, cli_runner, app, tmp_config_dir):
+        """Chain with --on-failure continue stores correctly."""
+        self._register_two(cli_runner, app)
+        result = cli_runner.invoke(app, [
+            "chain", "cmd-a", "--next", "cmd-b", "--on-failure", "continue",
+        ])
+        assert result.exit_code == 0
+        assert "Chained" in result.output
+
+        # Verify via --show that continue annotation appears
+        result = cli_runner.invoke(app, ["chain", "cmd-a", "--show"])
+        assert "continue on failure" in result.output
+
+    def test_chain_no_flags(self, cli_runner, app, tmp_config_dir):
+        """Chain without --next/--show/--remove shows usage hint."""
+        cli_runner.invoke(app, [
+            "register", "cmd-a", "--prompt", "do A", "--environment", "/tmp",
+        ])
+        result = cli_runner.invoke(app, ["chain", "cmd-a"])
+        assert result.exit_code == 1
+        assert "--next" in result.output or "--show" in result.output
+
+    def test_chain_remove_no_link(self, cli_runner, app, tmp_config_dir):
+        """Remove on command with no chain link shows warning."""
+        cli_runner.invoke(app, [
+            "register", "cmd-a", "--prompt", "do A", "--environment", "/tmp",
+        ])
+        result = cli_runner.invoke(app, ["chain", "cmd-a", "--remove"])
+        assert result.exit_code == 0
+        assert "has no chain link" in result.output
+
+    def test_chain_self_link_rejected(self, cli_runner, app, tmp_config_dir):
+        """Self-link A->A is rejected as cycle."""
+        cli_runner.invoke(app, [
+            "register", "cmd-a", "--prompt", "do A", "--environment", "/tmp",
+        ])
+        result = cli_runner.invoke(app, ["chain", "cmd-a", "--next", "cmd-a"])
+        assert result.exit_code == 1
+        assert "Cycle detected" in result.output
+
+    def test_exec_follows_chain(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """Exec with chained commands calls execute_chain and shows Chain ID."""
+        from navigator.chainer import ChainResult
+        from navigator.executor import ExecutionResult
+
+        self._register_two(cli_runner, app)
+        cli_runner.invoke(app, ["chain", "cmd-a", "--next", "cmd-b"])
+
+        mock_chain_result = ChainResult(
+            correlation_id="test-corr-id-1234",
+            results=[
+                ExecutionResult(
+                    command_name="cmd-a", returncode=0, stdout="A out",
+                    stderr="", attempts=1, duration=1.0, timed_out=False, log_path=None,
+                ),
+                ExecutionResult(
+                    command_name="cmd-b", returncode=0, stdout="B out",
+                    stderr="", attempts=1, duration=1.0, timed_out=False, log_path=None,
+                ),
+            ],
+            success=True,
+            steps_run=2,
+            total_steps=2,
+        )
+        monkeypatch.setattr(
+            "navigator.chainer.execute_chain",
+            lambda conn, cmd, config: mock_chain_result,
+        )
+
+        result = cli_runner.invoke(app, ["exec", "cmd-a"])
+        assert result.exit_code == 0
+        assert "Chain ID" in result.output
+        assert "test-corr-id-1234" in result.output
+        assert "2/2" in result.output
