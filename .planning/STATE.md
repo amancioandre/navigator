@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Phase 2 plans created and verified
-last_updated: "2026-03-24T04:12:47.842Z"
+status: Ready to execute
+stopped_at: Completed 02-01-PLAN.md
+last_updated: "2026-03-24T04:18:16.756Z"
 progress:
   total_phases: 10
   completed_phases: 1
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-23)
 
 **Core value:** Autonomous task orchestration -- registered commands run on schedule or on file changes, with the right context and secrets, without human intervention unless something fails.
-**Current focus:** Phase 01 — project-scaffold
+**Current focus:** Phase 02 — command-registry
 
 ## Current Position
 
-Phase: 2
-Plan: Not started
+Phase: 02 (command-registry) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -48,6 +48,7 @@ Plan: Not started
 *Updated after each plan completion*
 | Phase 01 P01 | 2min | 3 tasks | 8 files |
 | Phase 01 P02 | 2min | 2 tasks | 3 files |
+| Phase 02 P01 | 3min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -62,6 +63,8 @@ Recent decisions affecting current work:
 - [Phase 01]: exec_command function name avoids shadowing builtin exec (same as list_commands for list)
 - [Phase 01]: Config uses XDG data dir for mutable data (DB, logs) and XDG config dir for settings (TOML)
 - [Phase 01]: Pydantic Field(default_factory) defers platformdirs calls; model_dump(mode=json) for TOML serialization
+- [Phase 02]: WAL pragma requires autocommit=True at connection time, then switch to autocommit=False for transaction safety
+- [Phase 02]: allowed_tools stored as JSON text in SQLite, deserialized on read
 
 ### Pending Todos
 
@@ -73,6 +76,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-24T04:12:47.840Z
-Stopped at: Phase 2 plans created and verified
-Resume file: .planning/phases/02-command-registry/02-01-PLAN.md
+Last session: 2026-03-24T04:18:16.754Z
+Stopped at: Completed 02-01-PLAN.md
+Resume file: None

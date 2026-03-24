@@ -9,7 +9,7 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Registry
 
-- [ ] **REG-01**: User can register a command with a name, prompt, environment path, secrets path, and allowed tools
+- [x] **REG-01**: User can register a command with a name, prompt, environment path, secrets path, and allowed tools
 - [ ] **REG-02**: User can list all registered commands with filtering by namespace
 - [ ] **REG-03**: User can show details of a specific registered command
 - [ ] **REG-04**: User can update any field of a registered command
@@ -18,7 +18,7 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **REG-07**: User can resume a paused command
 - [ ] **REG-08**: User can list commands sorted by created date for housekeeping
 - [ ] **REG-09**: User can dry-run a command to see what would execute without running it
-- [ ] **REG-10**: Registry persists in SQLite with crash-safe atomic transactions
+- [x] **REG-10**: Registry persists in SQLite with crash-safe atomic transactions
 
 ### Execution
 
@@ -117,7 +117,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| REG-01 | Phase 2 | Pending |
+| REG-01 | Phase 2 | Complete |
 | REG-02 | Phase 2 | Pending |
 | REG-03 | Phase 2 | Pending |
 | REG-04 | Phase 2 | Pending |
@@ -126,7 +126,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | REG-07 | Phase 2 | Pending |
 | REG-08 | Phase 2 | Pending |
 | REG-09 | Phase 10 | Pending |
-| REG-10 | Phase 2 | Pending |
+| REG-10 | Phase 2 | Complete |
 | EXEC-01 | Phase 3 | Pending |
 | EXEC-02 | Phase 3 | Pending |
 | EXEC-03 | Phase 3 | Pending |

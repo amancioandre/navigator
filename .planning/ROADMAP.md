@@ -51,7 +51,7 @@ Plans:
   5. Registry data persists across restarts in SQLite with crash-safe atomic writes
 **Plans**: 2 plans
 Plans:
-- [ ] 02-01-PLAN.md — Command model, SQLite database layer, and data layer tests
+- [x] 02-01-PLAN.md — Command model, SQLite database layer, and data layer tests
 - [ ] 02-02-PLAN.md — All 7 CLI subcommands (register, list, show, update, delete, pause, resume) and CLI integration tests
 
 ### Phase 3: Execution Core
