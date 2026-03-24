@@ -78,7 +78,10 @@ Plans:
   3. User can view execution logs via `navigator logs <command>`
   4. Long-running commands are terminated after the configured timeout
   5. Child processes are tracked by PID and cleaned up via process groups (no zombies)
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 04-01-PLAN.md — Execution engine hardening: Popen with process groups, retry, timeout, execution logging module
+- [ ] 04-02-PLAN.md — CLI wiring: --timeout/--retries flags on exec, navigator logs command
 
 ### Phase 5: Cron Scheduling
 **Goal**: Users can schedule commands to run automatically via the system crontab
@@ -159,7 +162,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 | 1. Project Scaffold | 2/2 | Complete | 2026-03-24 |
 | 2. Command Registry | 0/2 | Planning | - |
 | 3. Execution Core | 0/2 | Planning | - |
-| 4. Execution Hardening | 0/TBD | Not started | - |
+| 4. Execution Hardening | 0/2 | Planning | - |
 | 5. Cron Scheduling | 0/TBD | Not started | - |
 | 6. File Watching | 0/TBD | Not started | - |
 | 7. Namespacing | 0/TBD | Not started | - |
