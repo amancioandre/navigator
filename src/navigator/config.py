@@ -44,6 +44,7 @@ class NavigatorConfig(BaseModel):
     secrets_base_path: Path = Field(default_factory=lambda: Path.home() / ".secrets" / "navigator")
     default_retry_count: int = 3
     default_timeout: int = 300
+    max_chain_depth: int = 10
 
     def resolve_paths(self) -> None:
         """Resolve all path fields to absolute paths."""

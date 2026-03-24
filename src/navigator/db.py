@@ -21,6 +21,8 @@ CREATE TABLE IF NOT EXISTS commands (
     secrets TEXT,
     allowed_tools TEXT NOT NULL DEFAULT '[]',
     namespace TEXT NOT NULL DEFAULT 'default',
+    chain_next TEXT,
+    on_failure_continue INTEGER NOT NULL DEFAULT 0,
     status TEXT NOT NULL DEFAULT 'active',
     created_at TEXT NOT NULL,
     updated_at TEXT NOT NULL
@@ -95,6 +97,17 @@ def init_db(conn: sqlite3.Connection) -> None:
         conn.execute(_CREATE_WATCHERS_TABLE)
         conn.execute(_CREATE_INDEX_WATCHERS_COMMAND)
         conn.execute(_CREATE_INDEX_WATCHERS_STATUS)
+        # Migration: add chain columns if missing
+        try:
+            conn.execute("ALTER TABLE commands ADD COLUMN chain_next TEXT")
+        except sqlite3.OperationalError:
+            pass  # column already exists
+        try:
+            conn.execute(
+                "ALTER TABLE commands ADD COLUMN on_failure_continue INTEGER NOT NULL DEFAULT 0"
+            )
+        except sqlite3.OperationalError:
+            pass  # column already exists
         conn.execute(
             "INSERT OR IGNORE INTO namespaces (name, description, created_at) VALUES (?, ?, ?)",
             ("default", "Default namespace", datetime.now(UTC).isoformat()),
@@ -107,8 +120,8 @@ def insert_command(conn: sqlite3.Connection, cmd: Command) -> None:
         conn.execute(
             """INSERT INTO commands
             (id, name, prompt, environment, secrets, allowed_tools,
-             namespace, status, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+             namespace, chain_next, on_failure_continue, status, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
             (
                 cmd.id,
                 cmd.name,
@@ -117,6 +130,8 @@ def insert_command(conn: sqlite3.Connection, cmd: Command) -> None:
                 str(cmd.secrets) if cmd.secrets else None,
                 json.dumps(cmd.allowed_tools),
                 cmd.namespace,
+                cmd.chain_next,
+                1 if cmd.on_failure_continue else 0,
                 cmd.status,
                 cmd.created_at,
                 cmd.updated_at,
@@ -170,6 +185,8 @@ def update_command(conn: sqlite3.Connection, name: str, **fields: object) -> int
     # Serialize complex types
     if "allowed_tools" in updates:
         updates["allowed_tools"] = json.dumps(updates["allowed_tools"])
+    if "on_failure_continue" in updates:
+        updates["on_failure_continue"] = 1 if updates["on_failure_continue"] else 0
     if "environment" in updates:
         updates["environment"] = str(updates["environment"])
     if "secrets" in updates:
@@ -203,6 +220,8 @@ def row_to_command(row: sqlite3.Row) -> Command:
         secrets=Path(row["secrets"]) if row["secrets"] else None,
         allowed_tools=json.loads(row["allowed_tools"]),
         namespace=row["namespace"],
+        chain_next=row["chain_next"],
+        on_failure_continue=bool(row["on_failure_continue"]),
         status=CommandStatus(row["status"]),
         created_at=row["created_at"],
         updated_at=row["updated_at"],

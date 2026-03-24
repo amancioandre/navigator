@@ -41,6 +41,8 @@ class Command(BaseModel):
     secrets: Path | None = None
     allowed_tools: list[str] = Field(default_factory=list)
     namespace: str = "default"
+    chain_next: str | None = None
+    on_failure_continue: bool = False
     status: CommandStatus = CommandStatus.ACTIVE
     created_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
     updated_at: str = Field(default_factory=lambda: datetime.now(UTC).isoformat())
