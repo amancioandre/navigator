@@ -1147,3 +1147,143 @@ class TestServiceCLI:
         )
         result = cli_runner.invoke(app, ["service", "status"])
         assert result.exit_code == 3
+
+
+# === Phase 10 tests — --dry-run on exec ===
+
+
+class TestDryRun:
+    """Tests for navigator exec --dry-run flag."""
+
+    def test_dry_run_text_output(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """Exec --dry-run shows Rich panel with command preview."""
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "do stuff",
+            "--environment", "/tmp",
+            "--allowed-tools", "Read,Write",
+        ])
+
+        # Mock build functions so we don't need real claude binary
+        monkeypatch.setattr(
+            "navigator.executor.build_command_args",
+            lambda prompt, tools: ["claude", "-p", prompt, "--print"],
+        )
+        monkeypatch.setattr(
+            "navigator.executor.build_clean_env",
+            lambda secrets=None, extra_env=None: {"PATH": "/usr/bin", "HOME": "/home/test"},
+        )
+        monkeypatch.setattr(
+            "navigator.secrets.load_secrets",
+            lambda path: {},
+        )
+
+        result = cli_runner.invoke(app, ["exec", "test-cmd", "--dry-run"])
+        assert result.exit_code == 0
+        assert "Dry Run" in result.output
+        assert "test-cmd" in result.output
+        assert "/tmp" in result.output
+
+    def test_dry_run_does_not_execute(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """Exec --dry-run never calls execute_command."""
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "do stuff",
+            "--environment", "/tmp",
+        ])
+
+        execute_called = {"called": False}
+
+        def mock_execute(*a, **kw):
+            execute_called["called"] = True
+
+        monkeypatch.setattr("navigator.executor.execute_command", mock_execute)
+        monkeypatch.setattr(
+            "navigator.executor.build_command_args",
+            lambda prompt, tools: ["claude", "-p", prompt, "--print"],
+        )
+        monkeypatch.setattr(
+            "navigator.executor.build_clean_env",
+            lambda secrets=None, extra_env=None: {"PATH": "/usr/bin"},
+        )
+        monkeypatch.setattr(
+            "navigator.secrets.load_secrets",
+            lambda path: {},
+        )
+
+        result = cli_runner.invoke(app, ["exec", "test-cmd", "--dry-run"])
+        assert result.exit_code == 0
+        assert not execute_called["called"]
+
+    def test_dry_run_shows_env_keys_not_values(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """Exec --dry-run shows env key names but never secret values."""
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "do stuff",
+            "--environment", "/tmp",
+        ])
+
+        monkeypatch.setattr(
+            "navigator.executor.build_command_args",
+            lambda prompt, tools: ["claude", "-p", prompt, "--print"],
+        )
+        monkeypatch.setattr(
+            "navigator.executor.build_clean_env",
+            lambda secrets=None, extra_env=None: {
+                "PATH": "/usr/bin",
+                "MY_SECRET": "super-secret-value-12345",
+            },
+        )
+        monkeypatch.setattr(
+            "navigator.secrets.load_secrets",
+            lambda path: {"MY_SECRET": "super-secret-value-12345"},
+        )
+
+        result = cli_runner.invoke(app, ["exec", "test-cmd", "--dry-run"])
+        assert result.exit_code == 0
+        assert "MY_SECRET" in result.output
+        assert "super-secret-value-12345" not in result.output
+
+    def test_dry_run_json_output(self, cli_runner, app, tmp_config_dir, monkeypatch):
+        """Exec --output json --dry-run returns JSON with dry run data."""
+        import json
+
+        cli_runner.invoke(app, [
+            "register", "test-cmd", "--prompt", "do stuff",
+            "--environment", "/tmp",
+            "--allowed-tools", "Read,Write",
+        ])
+
+        monkeypatch.setattr(
+            "navigator.executor.build_command_args",
+            lambda prompt, tools: ["claude", "-p", prompt, "--print"],
+        )
+        monkeypatch.setattr(
+            "navigator.executor.build_clean_env",
+            lambda secrets=None, extra_env=None: {"PATH": "/usr/bin", "HOME": "/home/test"},
+        )
+        monkeypatch.setattr(
+            "navigator.secrets.load_secrets",
+            lambda path: {},
+        )
+
+        result = cli_runner.invoke(app, ["--output", "json", "exec", "test-cmd", "--dry-run"])
+        assert result.exit_code == 0
+        data = json.loads(result.output)
+        assert data["status"] == "ok"
+        assert data["data"]["command_name"] == "test-cmd"
+        assert "command_args" in data["data"]
+        assert "env_keys" in data["data"]
+        assert "working_directory" in data["data"]
+        assert data["data"]["working_directory"] == "/tmp"
+
+    def test_dry_run_nonexistent_command(self, cli_runner, app, tmp_config_dir):
+        """Exec nonexistent --dry-run exits 1 with error."""
+        result = cli_runner.invoke(app, ["exec", "nonexistent", "--dry-run"])
+        assert result.exit_code == 1
+        assert "not found" in result.output
+
+    def test_dry_run_paused_command(self, cli_runner, app, tmp_config_dir):
+        """Exec paused-cmd --dry-run exits 1 (paused check still applies)."""
+        cli_runner.invoke(app, ["register", "paused-cmd", "--prompt", "do stuff"])
+        cli_runner.invoke(app, ["pause", "paused-cmd"])
+        result = cli_runner.invoke(app, ["exec", "paused-cmd", "--dry-run"])
+        assert result.exit_code == 1
+        assert "paused" in result.output
