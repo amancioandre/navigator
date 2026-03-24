@@ -22,9 +22,9 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - ✓ Environment path (`--environment`) defines the working directory and shared state location for a command — Phase 3
 - ✓ Pre-configured Claude Code permissions (`--allowedTools`) per registered command — Phase 3
 - ✓ Retry with backoff (`--retries N`) on failure — Phase 4
+- ✓ Cron-based scheduling via system crontab — Navigator reads and manages real crontab entries — Phase 5
 
 ### Active
-- [ ] Cron-based scheduling via system crontab — Navigator reads and manages real crontab entries
 - [ ] File/folder watching as a trigger pattern (periodic polling or inotify), with optional time-window constraints
 - [ ] Command chaining — commands can trigger other registered commands, running as separate sessions with shared files/state
 - [ ] Multi-project namespacing — commands are namespaced by project, cross-namespace chaining supported
@@ -88,4 +88,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after Phase 4 completion*
+*Last updated: 2026-03-24 after Phase 5 completion*
