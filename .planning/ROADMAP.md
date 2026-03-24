@@ -63,7 +63,10 @@ Plans:
   2. Secrets from the command's secrets path are injected as environment variables into the subprocess
   3. Secrets never appear in logs, CLI arguments, or process tables
   4. Subprocess runs in a clean environment (only declared variables) in the registered working directory
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 03-01-PLAN.md — Secrets module, executor module with environment isolation, and unit tests
+- [ ] 03-02-PLAN.md — Wire exec CLI subcommand to executor with CLI integration tests
 
 ### Phase 4: Execution Hardening
 **Goal**: Executions are robust with retry, logging, timeouts, and clean process lifecycle
@@ -155,7 +158,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
 |-------|----------------|--------|-----------|
 | 1. Project Scaffold | 2/2 | Complete | 2026-03-24 |
 | 2. Command Registry | 0/2 | Planning | - |
-| 3. Execution Core | 0/TBD | Not started | - |
+| 3. Execution Core | 0/2 | Planning | - |
 | 4. Execution Hardening | 0/TBD | Not started | - |
 | 5. Cron Scheduling | 0/TBD | Not started | - |
 | 6. File Watching | 0/TBD | Not started | - |
