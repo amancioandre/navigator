@@ -20,6 +20,9 @@ nav:
     - Scheduling: guides/scheduling.md
     - File Watching: guides/file-watching.md
     - Command Chaining: guides/chaining.md
+    - Secrets: guides/secrets.md
+    - Namespaces: guides/namespaces.md
+    - Systemd Service: guides/systemd.md
   - Reference:
     - CLI: reference/cli.md
 
