@@ -1,0 +1,26 @@
+site_name: Navigator
+site_description: Autonomous task orchestrator for Claude Code sessions
+site_url: ""
+
+theme:
+  name: material
+  features:
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+  palette:
+    - scheme: default
+
+nav:
+  - Home: index.md
+  - Reference:
+    - CLI: reference/cli.md
+
+plugins:
+  - search
+  - mkdocs-click
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
