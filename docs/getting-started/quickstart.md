@@ -68,4 +68,6 @@ Deleted command 'hello-world'
 ## What's Next
 
 - [CLI Reference](../reference/cli.md) -- full command documentation
-- Feature Guides -- scheduling, file watching, chaining, and more (coming soon)
+- [Scheduling](../guides/scheduling.md) -- automate commands with cron
+- [File Watching](../guides/file-watching.md) -- trigger commands on file changes
+- [Command Chaining](../guides/chaining.md) -- run commands in sequence

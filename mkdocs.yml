@@ -23,6 +23,7 @@ nav:
     - Secrets: guides/secrets.md
     - Namespaces: guides/namespaces.md
     - Systemd Service: guides/systemd.md
+    - Configuration: guides/configuration.md
   - Reference:
     - CLI: reference/cli.md
 
