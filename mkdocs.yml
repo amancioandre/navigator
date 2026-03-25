@@ -18,9 +18,9 @@ nav:
 
 plugins:
   - search
-  - mkdocs-click
 
 markdown_extensions:
   - admonition
   - pymdownx.highlight
   - pymdownx.superfences
+  - mkdocs-click
