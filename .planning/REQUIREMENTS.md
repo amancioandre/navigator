@@ -27,7 +27,7 @@ Requirements for documentation milestone. Each maps to roadmap phases.
 ### Documentation Infrastructure
 
 - [x] **DINF-01**: MkDocs site scaffold with Material theme, mkdocs.yml config, and dependency group in pyproject.toml
-- [ ] **DINF-02**: Auto-generated CLI reference from Typer app covering all commands and subcommands
+- [x] **DINF-02**: Auto-generated CLI reference from Typer app covering all commands and subcommands
 - [x] **DINF-03**: Strict build validation (mkdocs build --strict) integrated into dev workflow
 
 ### Getting Started
@@ -84,7 +84,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | DINF-01 | Phase 11 | Complete |
-| DINF-02 | Phase 12 | Pending |
+| DINF-02 | Phase 12 | Complete |
 | DINF-03 | Phase 11 | Complete |
 | START-01 | Phase 13 | Pending |
 | START-02 | Phase 13 | Pending |

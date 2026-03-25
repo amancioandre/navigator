@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 ### v1.1 Documentation
 
 - [x] **Phase 11: Docs Foundation** - MkDocs scaffold with Material theme, dependency group, and strict build validation (completed 2026-03-25)
-- [ ] **Phase 12: CLI Reference** - Auto-generated CLI reference covering all commands and subcommands
+- [x] **Phase 12: CLI Reference** - Auto-generated CLI reference covering all commands and subcommands (completed 2026-03-25)
 - [ ] **Phase 13: Getting Started** - Installation guide and quick start tutorial
 - [ ] **Phase 14: Feature Guides** - Seven task-oriented guides for each major Navigator capability
 - [ ] **Phase 15: README** - Comprehensive README.md with install, quick start, and links to docs site
@@ -119,7 +119,7 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 11. Docs Foundation | 0/1 | Complete    | 2026-03-25 |
-| 12. CLI Reference | 0/1 | Not started | - |
+| 12. CLI Reference | 0/1 | Complete    | 2026-03-25 |
 | 13. Getting Started | 0/0 | Not started | - |
 | 14. Feature Guides | 0/0 | Not started | - |
 | 15. README | 0/0 | Not started | - |
