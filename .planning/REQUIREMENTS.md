@@ -37,9 +37,9 @@ Requirements for documentation milestone. Each maps to roadmap phases.
 
 ### Feature Guides
 
-- [ ] **GUIDE-01**: Scheduling guide — cron-based scheduling with examples
-- [ ] **GUIDE-02**: File watching guide — watchdog triggers with debounce, ignore patterns, time windows
-- [ ] **GUIDE-03**: Command chaining guide — sequential triggers, correlation IDs, cycle detection
+- [x] **GUIDE-01**: Scheduling guide — cron-based scheduling with examples
+- [x] **GUIDE-02**: File watching guide — watchdog triggers with debounce, ignore patterns, time windows
+- [x] **GUIDE-03**: Command chaining guide — sequential triggers, correlation IDs, cycle detection
 - [ ] **GUIDE-04**: Secrets management guide — .env loading, environment isolation, security model
 - [ ] **GUIDE-05**: Namespaces guide — multi-project organization, cross-namespace references
 - [ ] **GUIDE-06**: Systemd service guide — daemon persistence, install/uninstall, reboot survival
@@ -88,9 +88,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DINF-03 | Phase 11 | Complete |
 | START-01 | Phase 13 | Complete |
 | START-02 | Phase 13 | Complete |
-| GUIDE-01 | Phase 14 | Pending |
-| GUIDE-02 | Phase 14 | Pending |
-| GUIDE-03 | Phase 14 | Pending |
+| GUIDE-01 | Phase 14 | Complete |
+| GUIDE-02 | Phase 14 | Complete |
+| GUIDE-03 | Phase 14 | Complete |
 | GUIDE-04 | Phase 14 | Pending |
 | GUIDE-05 | Phase 14 | Pending |
 | GUIDE-06 | Phase 14 | Pending |

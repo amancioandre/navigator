@@ -92,7 +92,7 @@ Plans:
   7. A configuration reference documents every config.toml option with types, defaults, and examples
 **Plans**: 3 plans
 Plans:
-- [ ] 14-01-PLAN.md — Scheduling, file watching, and chaining guides with nav setup
+- [x] 14-01-PLAN.md — Scheduling, file watching, and chaining guides with nav setup
 - [ ] 14-02-PLAN.md — Secrets, namespaces, and systemd guides
 - [ ] 14-03-PLAN.md — Configuration reference and cross-link updates
 
@@ -127,6 +127,6 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 | 11. Docs Foundation | 0/1 | Complete    | 2026-03-25 |
 | 12. CLI Reference | 0/1 | Complete    | 2026-03-25 |
 | 13. Getting Started | 1/1 | Complete    | 2026-03-25 |
-| 14. Feature Guides | 0/3 | Not started | - |
+| 14. Feature Guides | 1/3 | In Progress|  |
 | 15. README | 0/0 | Not started | - |
 | 16. Docs Maintenance | 0/0 | Not started | - |

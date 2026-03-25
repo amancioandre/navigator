@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Documentation
-status: Ready to plan
-stopped_at: Completed 13-01-PLAN.md
-last_updated: "2026-03-25T20:31:43.000Z"
+status: Ready to execute
+stopped_at: Completed 14-01-PLAN.md
+last_updated: "2026-03-25T22:46:33.272Z"
 progress:
   total_phases: 6
   completed_phases: 3
-  total_plans: 3
-  completed_plans: 3
+  total_plans: 6
+  completed_plans: 4
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Autonomous task orchestration -- registered commands run on schedule or on file changes, with the right context and secrets, without human intervention unless something fails.
-**Current focus:** Phase 13 — Getting Started
+**Current focus:** Phase 14 — Feature Guides
 
 ## Current Position
 
-Phase: 14
-Plan: Not started
+Phase: 14 (Feature Guides) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -56,6 +56,7 @@ Recent decisions affecting current work:
 - [Phase 11]: mkdocs-click used as markdown extension (not plugin) for CLI doc generation
 - [Phase 12-cli-reference]: Help text improvements kept to single sentences for clean mkdocs-click table rendering
 - [Phase 13]: Two separate pages (installation + quickstart) for focused content; Feature Guides as coming-soon plain text to avoid strict build failures
+- [Phase 14]: Cross-links to future guides use plain text to pass strict build; converted to real links when target guides exist
 
 ### Pending Todos
 
@@ -67,6 +68,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T20:28:45.129Z
-Stopped at: Completed 13-01-PLAN.md
+Last session: 2026-03-25T22:46:33.270Z
+Stopped at: Completed 14-01-PLAN.md
 Resume file: None
