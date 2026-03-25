@@ -1,8 +1,9 @@
 # Roadmap: Navigator
 
-## Overview
+## Milestones
 
-Navigator delivers autonomous task orchestration in 10 phases, starting from a pip-installable package skeleton, building up the command registry and execution engine, then layering scheduling, file watching, namespacing, chaining, daemon persistence, and operational tooling. Each phase delivers a coherent, testable capability. The ordering ensures that foundational components (registry, executor) are solid before dependent features (scheduling, chaining, watchers) build on top.
+- v1.0 Navigator Core (shipped 2026-03-25)
+- v1.1 Documentation (in progress)
 
 ## Phases
 
@@ -12,178 +13,110 @@ Navigator delivers autonomous task orchestration in 10 phases, starting from a p
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Project Scaffold** - Installable Python package with CLI entry point and configuration
-- [ ] **Phase 2: Command Registry** - Full CRUD for registered commands backed by SQLite
-- [ ] **Phase 3: Execution Core** - Run registered commands as Claude Code subprocesses with secrets and clean environments
-- [ ] **Phase 4: Execution Hardening** - Retry, timeouts, logging, and process lifecycle management
-- [ ] **Phase 5: Cron Scheduling** - Schedule commands via real system crontab with lock-safe writes
-- [x] **Phase 6: File Watching** - Trigger commands on filesystem changes with debounce and guards (completed 2026-03-24)
-- [ ] **Phase 7: Namespacing** - Multi-project command isolation with per-namespace secrets
-- [x] **Phase 8: Command Chaining** - Sequential command triggers with depth limits and cycle detection (completed 2026-03-24)
-- [ ] **Phase 9: Daemon and systemd** - Persistent watcher daemon and systemd service installation
-- [x] **Phase 10: Operational Polish** - Health checks, JSON output, and dry-run for Claude Code agents (completed 2026-03-24)
+<details>
+<summary>v1.0 Navigator Core (Phases 1-10) - SHIPPED 2026-03-25</summary>
+
+- [x] **Phase 1: Project Scaffold** - Installable Python package with CLI entry point and configuration
+- [x] **Phase 2: Command Registry** - Full CRUD for registered commands backed by SQLite
+- [x] **Phase 3: Execution Core** - Run registered commands as Claude Code subprocesses with secrets and clean environments
+- [x] **Phase 4: Execution Hardening** - Retry, timeouts, logging, and process lifecycle management
+- [x] **Phase 5: Cron Scheduling** - Schedule commands via real system crontab with lock-safe writes
+- [x] **Phase 6: File Watching** - Trigger commands on filesystem changes with debounce and guards
+- [x] **Phase 7: Namespacing** - Multi-project command isolation with per-namespace secrets
+- [x] **Phase 8: Command Chaining** - Sequential command triggers with depth limits and cycle detection
+- [x] **Phase 9: Daemon and systemd** - Persistent watcher daemon and systemd service installation
+- [x] **Phase 10: Operational Polish** - Health checks, JSON output, and dry-run for Claude Code agents
+
+</details>
+
+### v1.1 Documentation
+
+- [ ] **Phase 11: Docs Foundation** - MkDocs scaffold with Material theme, dependency group, and strict build validation
+- [ ] **Phase 12: CLI Reference** - Auto-generated CLI reference covering all commands and subcommands
+- [ ] **Phase 13: Getting Started** - Installation guide and quick start tutorial
+- [ ] **Phase 14: Feature Guides** - Seven task-oriented guides for each major Navigator capability
+- [ ] **Phase 15: README** - Comprehensive README.md with install, quick start, and links to docs site
+- [ ] **Phase 16: Docs Maintenance** - Strict build enforcement and maintenance conventions for future milestones
 
 ## Phase Details
 
-### Phase 1: Project Scaffold
-**Goal**: Navigator is installable and responds to CLI commands
-**Depends on**: Nothing (first phase)
-**Requirements**: INFRA-01, INFRA-05, INFRA-07
+### Phase 11: Docs Foundation
+**Goal**: MkDocs project builds cleanly and the auto-generation plugin is validated against Navigator's CLI
+**Depends on**: Phase 10 (v1.0 complete)
+**Requirements**: DINF-01, DINF-03
 **Success Criteria** (what must be TRUE):
-  1. User can run `pip install .` (or `uv tool install .`) and get a `navigator` command on PATH
-  2. User can run `navigator --help` and see available subcommands
-  3. Configuration file at `~/.config/navigator/config.toml` is created on first run with sensible defaults
-  4. All internal path references are resolved to absolute paths at registration time
-**Plans**: 2 plans
-Plans:
-- [x] 01-01-PLAN.md — Package skeleton, CLI entry point with 8 subcommand stubs, test infrastructure
-- [x] 01-02-PLAN.md — Config system with TOML persistence and absolute path resolution
+  1. Running `uv sync --group docs` installs MkDocs, Material theme, and CLI auto-generation plugin without affecting runtime dependencies
+  2. Running `mkdocs build --strict` produces a site with zero warnings from the project root
+  3. Running `mkdocs serve` launches a local dev server showing the Material-themed docs skeleton
+  4. The `site/` directory is gitignored and `mkdocs.yml` lives at the project root
+**Plans**: TBD
 
-### Phase 2: Command Registry
-**Goal**: Users can register, browse, and manage commands through the CLI
-**Depends on**: Phase 1
-**Requirements**: REG-01, REG-02, REG-03, REG-04, REG-05, REG-06, REG-07, REG-08, REG-10
+### Phase 12: CLI Reference
+**Goal**: Every Navigator command and subcommand is documented automatically from the live Typer app
+**Depends on**: Phase 11
+**Requirements**: DINF-02
 **Success Criteria** (what must be TRUE):
-  1. User can register a command with name, prompt, environment path, secrets path, and allowed tools
-  2. User can list, show, update, and delete registered commands
-  3. User can pause and resume a command without deleting it
-  4. User can list commands sorted by created date for housekeeping
-  5. Registry data persists across restarts in SQLite with crash-safe atomic writes
-**Plans**: 2 plans
-Plans:
-- [x] 02-01-PLAN.md — Command model, SQLite database layer, and data layer tests
-- [x] 02-02-PLAN.md — All 7 CLI subcommands (register, list, show, update, delete, pause, resume) and CLI integration tests
+  1. A CLI reference page exists at `docs/reference/cli.md` that renders all Navigator commands and subcommands
+  2. The reference is auto-generated from the Typer app object at build time (not hand-written)
+  3. Every `--help` string in `cli.py` is reviewed and provides clear descriptions (no empty or placeholder help text)
+**Plans**: TBD
 
-### Phase 3: Execution Core
-**Goal**: Registered commands run as Claude Code subprocesses with proper secrets and environment isolation
-**Depends on**: Phase 2
-**Requirements**: EXEC-01, EXEC-02, EXEC-03, EXEC-07, EXEC-08
+### Phase 13: Getting Started
+**Goal**: A new user can go from zero to a running scheduled command by following the docs
+**Depends on**: Phase 12
+**Requirements**: START-01, START-02
 **Success Criteria** (what must be TRUE):
-  1. User can run `navigator exec <command>` and it launches a Claude Code subprocess with the registered `--allowedTools`
-  2. Secrets from the command's secrets path are injected as environment variables into the subprocess
-  3. Secrets never appear in logs, CLI arguments, or process tables
-  4. Subprocess runs in a clean environment (only declared variables) in the registered working directory
-**Plans**: 2 plans
-Plans:
-- [x] 03-01-PLAN.md — Secrets module, executor module with environment isolation, and unit tests
-- [x] 03-02-PLAN.md — Wire exec CLI subcommand to executor with CLI integration tests
+  1. An installation guide covers pip install, uv install, and global install methods with prerequisites
+  2. The installation guide includes a verification step using `navigator doctor`
+  3. A quick start tutorial walks through registering a command, executing it, and verifying output end-to-end
+  4. The tutorial is self-contained and completable without reading any other page
+**Plans**: TBD
 
-### Phase 4: Execution Hardening
-**Goal**: Executions are robust with retry, logging, timeouts, and clean process lifecycle
-**Depends on**: Phase 3
-**Requirements**: EXEC-04, EXEC-05, EXEC-06, EXEC-09, EXEC-10
+### Phase 14: Feature Guides
+**Goal**: Each major Navigator capability has a task-oriented guide with real examples
+**Depends on**: Phase 13
+**Requirements**: GUIDE-01, GUIDE-02, GUIDE-03, GUIDE-04, GUIDE-05, GUIDE-06, GUIDE-07
 **Success Criteria** (what must be TRUE):
-  1. Failed commands retry with exponential backoff up to the configured retry count
-  2. Each execution captures stdout/stderr to per-execution log files
-  3. User can view execution logs via `navigator logs <command>`
-  4. Long-running commands are terminated after the configured timeout
-  5. Child processes are tracked by PID and cleaned up via process groups (no zombies)
-**Plans**: 2 plans
-Plans:
-- [x] 04-01-PLAN.md — Execution engine hardening: Popen with process groups, retry, timeout, execution logging module
-- [x] 04-02-PLAN.md — CLI wiring: --timeout/--retries flags on exec, navigator logs command
+  1. A scheduling guide covers cron expressions with working examples for common patterns (daily, hourly, weekday-only)
+  2. A file watching guide covers watchdog triggers including debounce tuning, ignore patterns, and time-window constraints
+  3. A chaining guide covers sequential triggers with correlation ID tracing and cycle detection behavior
+  4. A secrets guide covers .env loading, environment isolation, and the security model for secret injection
+  5. A namespaces guide covers multi-project organization with cross-namespace command references
+  6. A systemd guide covers daemon persistence including install, uninstall, and reboot survival verification
+  7. A configuration reference documents every config.toml option with types, defaults, and examples
+**Plans**: TBD
 
-### Phase 5: Cron Scheduling
-**Goal**: Users can schedule commands to run automatically via the system crontab
-**Depends on**: Phase 4
-**Requirements**: SCHED-01, SCHED-02, SCHED-03, SCHED-04, SCHED-05
+### Phase 15: README
+**Goal**: The project README serves as a concise entry point that links to the docs site for depth
+**Depends on**: Phase 14
+**Requirements**: READ-01
 **Success Criteria** (what must be TRUE):
-  1. User can schedule a command with `navigator schedule <command> --cron <expr>`
-  2. Scheduled commands appear as tagged entries in the real system crontab (`# navigator:<id>`)
-  3. User can unschedule a command and the crontab entry is removed
-  4. Concurrent crontab writes are file-locked to prevent corruption
-  5. Crontab entries invoke `navigator exec <id>` so scheduled tasks work even if the daemon is down
-**Plans**: 2 plans
-Plans:
-- [x] 05-01-PLAN.md -- CrontabManager module with file locking, scheduler tests, python-crontab dependency
-- [x] 05-02-PLAN.md -- Wire schedule CLI command (--cron, --remove, --list) with integration tests
+  1. README.md exists at the project root with installation instructions matching the docs site installation guide
+  2. README includes a quick start section with 4-5 commands showing the core workflow
+  3. README includes a feature overview listing all major capabilities with one-line descriptions
+  4. README is under 150 lines and links to the docs site for CLI reference and detailed guides
+**Plans**: TBD
 
-### Phase 6: File Watching
-**Goal**: Commands can be triggered by filesystem changes with proper debounce and safety guards
-**Depends on**: Phase 4
-**Requirements**: WATCH-01, WATCH-02, WATCH-03, WATCH-04, WATCH-05
+### Phase 16: Docs Maintenance
+**Goal**: Documentation stays current as Navigator evolves beyond this milestone
+**Depends on**: Phase 15
+**Requirements**: MAINT-01
 **Success Criteria** (what must be TRUE):
-  1. User can register a file/folder watcher that triggers a command on changes
-  2. Watchers debounce rapid events (configurable, default 500ms) using inotify via watchdog
-  3. Changes made by the triggered command itself do not re-trigger the watcher
-  4. Watchers support time-window constraints (e.g., only trigger between 9am-5pm)
-  5. Watchers support ignore patterns for editor temp files, .git, etc.
-**Plans**: 2 plans
-Plans:
-- [x] 06-01-PLAN.md — Watcher model, DB schema + CRUD, event handler (debounce, guard, time window), watchdog dependency
-- [x] 06-02-PLAN.md — Wire watch CLI command (--path, --pattern, --remove, --list, --start daemon) with integration tests
-
-### Phase 7: Namespacing
-**Goal**: Commands are organized by project with isolated secrets and cross-namespace visibility
-**Depends on**: Phase 2
-**Requirements**: NS-01, NS-02, NS-03, NS-04
-**Success Criteria** (what must be TRUE):
-  1. User can register commands in `namespace:command` format
-  2. User can create, list, and delete namespaces
-  3. Commands can reference commands in other namespaces
-  4. Secrets are isolated per namespace under `~/.secrets/<namespace>/`
-**Plans**: 2 plans
-Plans:
-- [x] 07-01-PLAN.md — Namespace model, DB schema + CRUD, qualified name parser, per-namespace secrets resolution
-- [x] 07-02-PLAN.md — Namespace CLI subcommand group, update register/exec/show for qualified names
-
-### Phase 8: Command Chaining
-**Goal**: Completing one command can automatically trigger the next with shared state and safety limits
-**Depends on**: Phase 4, Phase 7
-**Requirements**: CHAIN-01, CHAIN-02, CHAIN-03, CHAIN-04, CHAIN-05, CHAIN-06
-**Success Criteria** (what must be TRUE):
-  1. User can chain commands so completing one triggers the next with shared state via environment path
-  2. Chained commands run as separate Claude Code sessions
-  3. Chain failure semantics are configurable (stop-on-failure default, continue option)
-  4. Chain depth is limited (default 10) and cycles are detected and rejected at registration time
-  5. Each chain run gets a correlation ID visible in logs for tracing
-**Plans**: 2 plans
-Plans:
-- [x] 08-01-PLAN.md — Chain data model (chain_next, on_failure_continue columns), chainer module with cycle detection, depth limits, and chain execution engine
-- [x] 08-02-PLAN.md — Wire chain CLI command (--next, --show, --remove, --on-failure), update exec to follow chains, integration tests
-
-### Phase 9: Daemon and systemd
-**Goal**: File watchers and future services survive reboots as systemd-managed daemons
-**Depends on**: Phase 6
-**Requirements**: WATCH-06, INFRA-02, INFRA-06
-**Success Criteria** (what must be TRUE):
-  1. Watcher daemon runs as a systemd user service that starts on boot
-  2. User can run `navigator install-service` to generate and install systemd unit files
-  3. Service restarts automatically on failure
-  4. Daemon survives reboots and resumes watching registered paths
-**Plans**: 2 plans
-Plans:
-- [x] 09-01-PLAN.md — Service module with systemd unit generation, install/uninstall, systemctl wrapper, and unit tests
-- [x] 09-02-PLAN.md — Wire daemon, install-service, uninstall-service, service CLI commands with integration tests
-
-### Phase 10: Operational Polish
-**Goal**: Navigator is introspectable by humans and Claude Code agents with health checks and machine-readable output
-**Depends on**: Phase 5, Phase 9
-**Requirements**: REG-09, INFRA-03, INFRA-04
-**Success Criteria** (what must be TRUE):
-  1. User can dry-run a command to see what would execute without running it
-  2. `navigator doctor` verifies crontab entries, paths, permissions, and service health
-  3. `navigator --output json` provides machine-readable output for Claude Code agents
-**Plans**: 2 plans
-Plans:
-- [x] 10-01-PLAN.md — JSON output infrastructure (--output json global flag) and --dry-run on exec
-- [x] 10-02-PLAN.md — Doctor command with health checks, --fix auto-repair, and JSON output
+  1. `mkdocs build --strict` passes with zero warnings across the complete docs site
+  2. All docs pages are reachable from the navigation (no orphaned pages)
+  3. A documented convention exists for updating docs when CLI commands change in future milestones
+**Plans**: TBD
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6 -> 7 -> 8 -> 9 -> 10
-(Phases 5 and 6 can run in parallel after Phase 4; Phase 7 can start after Phase 2)
+Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Scaffold | 2/2 | Complete | 2026-03-24 |
-| 2. Command Registry | 0/2 | Planning | - |
-| 3. Execution Core | 0/2 | Planning | - |
-| 4. Execution Hardening | 0/2 | Planning | - |
-| 5. Cron Scheduling | 0/2 | Planning | - |
-| 6. File Watching | 2/2 | Complete   | 2026-03-24 |
-| 7. Namespacing | 1/2 | In Progress|  |
-| 8. Command Chaining | 2/2 | Complete   | 2026-03-24 |
-| 9. Daemon and systemd | 0/2 | Planning | - |
-| 10. Operational Polish | 2/2 | Complete    | 2026-03-24 |
+| 11. Docs Foundation | 0/0 | Not started | - |
+| 12. CLI Reference | 0/0 | Not started | - |
+| 13. Getting Started | 0/0 | Not started | - |
+| 14. Feature Guides | 0/0 | Not started | - |
+| 15. README | 0/0 | Not started | - |
+| 16. Docs Maintenance | 0/0 | Not started | - |

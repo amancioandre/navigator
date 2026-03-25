@@ -83,26 +83,26 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| DINF-01 | — | Pending |
-| DINF-02 | — | Pending |
-| DINF-03 | — | Pending |
-| START-01 | — | Pending |
-| START-02 | — | Pending |
-| GUIDE-01 | — | Pending |
-| GUIDE-02 | — | Pending |
-| GUIDE-03 | — | Pending |
-| GUIDE-04 | — | Pending |
-| GUIDE-05 | — | Pending |
-| GUIDE-06 | — | Pending |
-| GUIDE-07 | — | Pending |
-| READ-01 | — | Pending |
-| MAINT-01 | — | Pending |
+| DINF-01 | Phase 11 | Pending |
+| DINF-02 | Phase 12 | Pending |
+| DINF-03 | Phase 11 | Pending |
+| START-01 | Phase 13 | Pending |
+| START-02 | Phase 13 | Pending |
+| GUIDE-01 | Phase 14 | Pending |
+| GUIDE-02 | Phase 14 | Pending |
+| GUIDE-03 | Phase 14 | Pending |
+| GUIDE-04 | Phase 14 | Pending |
+| GUIDE-05 | Phase 14 | Pending |
+| GUIDE-06 | Phase 14 | Pending |
+| GUIDE-07 | Phase 14 | Pending |
+| READ-01 | Phase 15 | Pending |
+| MAINT-01 | Phase 16 | Pending |
 
 **Coverage:**
 - v1.1 requirements: 14 total
-- Mapped to phases: 0
-- Unmapped: 14 ⚠️
+- Mapped to phases: 14
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-23*
-*Last updated: 2026-03-25 after v1.1 milestone definition*
+*Last updated: 2026-03-25 after v1.1 roadmap creation*
