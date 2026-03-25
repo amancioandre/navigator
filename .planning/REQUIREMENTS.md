@@ -32,8 +32,8 @@ Requirements for documentation milestone. Each maps to roadmap phases.
 
 ### Getting Started
 
-- [ ] **START-01**: Installation guide covering pip, uv, and global install methods
-- [ ] **START-02**: Quick start tutorial walking through registering and executing a first command
+- [x] **START-01**: Installation guide covering pip, uv, and global install methods
+- [x] **START-02**: Quick start tutorial walking through registering and executing a first command
 
 ### Feature Guides
 
@@ -86,8 +86,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | DINF-01 | Phase 11 | Complete |
 | DINF-02 | Phase 12 | Complete |
 | DINF-03 | Phase 11 | Complete |
-| START-01 | Phase 13 | Pending |
-| START-02 | Phase 13 | Pending |
+| START-01 | Phase 13 | Complete |
+| START-02 | Phase 13 | Complete |
 | GUIDE-01 | Phase 14 | Pending |
 | GUIDE-02 | Phase 14 | Pending |
 | GUIDE-03 | Phase 14 | Pending |
