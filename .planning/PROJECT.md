@@ -32,6 +32,15 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - ✓ Survives reboots — systemd user service with auto-restart and linger support — Phase 9
 
 ### Active
+
+- [ ] MkDocs documentation site with full project docs (installation, configuration, CLI reference, guides)
+- [ ] Comprehensive README.md with installation instructions, quick start, and usage examples
+- [ ] CLI reference documentation for all commands and subcommands
+- [ ] Feature guides for scheduling, watching, chaining, secrets, namespaces, and systemd
+- [ ] Getting started / quick start tutorial
+
+### Future
+
 - [ ] Push notifications on failure via messaging bot
 - [ ] Remote CLI via private messaging bot (Telegram/Discord) — full CRUD, long-polling, never exposed publicly
 - [ ] Globally installed via pip (`pip install navigator`, `navigator` CLI command)
@@ -91,4 +100,16 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after Phase 10 completion*
+## Current Milestone: v1.1 Documentation
+
+**Goal:** Comprehensive project documentation using MkDocs and a README.md with full installation and usage instructions.
+
+**Target features:**
+- MkDocs documentation site with full project docs
+- Comprehensive README.md with installation, quick start, usage examples
+- CLI reference for all commands and subcommands
+- Feature guides for each major capability (scheduling, watching, chaining, secrets, namespaces, systemd)
+- Getting started tutorial
+
+---
+*Last updated: 2026-03-25 after milestone v1.1 start*
