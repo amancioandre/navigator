@@ -61,7 +61,9 @@ Plans:
   1. A CLI reference page exists at `docs/reference/cli.md` that renders all Navigator commands and subcommands
   2. The reference is auto-generated from the Typer app object at build time (not hand-written)
   3. Every `--help` string in `cli.py` is reviewed and provides clear descriptions (no empty or placeholder help text)
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 12-01-PLAN.md — Enhance CLI help strings and verify auto-generated reference
 
 ### Phase 13: Getting Started
 **Goal**: A new user can go from zero to a running scheduled command by following the docs
@@ -117,7 +119,7 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 11. Docs Foundation | 0/1 | Complete    | 2026-03-25 |
-| 12. CLI Reference | 0/0 | Not started | - |
+| 12. CLI Reference | 0/1 | Not started | - |
 | 13. Getting Started | 0/0 | Not started | - |
 | 14. Feature Guides | 0/0 | Not started | - |
 | 15. README | 0/0 | Not started | - |
