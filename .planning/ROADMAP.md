@@ -49,7 +49,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. Running `mkdocs build --strict` produces a site with zero warnings from the project root
   3. Running `mkdocs serve` launches a local dev server showing the Material-themed docs skeleton
   4. The `site/` directory is gitignored and `mkdocs.yml` lives at the project root
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 11-01-PLAN.md — MkDocs scaffold with Material theme, mkdocs-click plugin, and strict build validation
 
 ### Phase 12: CLI Reference
 **Goal**: Every Navigator command and subcommand is documented automatically from the live Typer app
