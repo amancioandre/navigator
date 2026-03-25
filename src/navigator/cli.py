@@ -23,7 +23,7 @@ console = Console()
 
 namespace_app = typer.Typer(
     name="namespace",
-    help="Manage namespaces.",
+    help="Manage namespaces for organizing commands into groups.",
     no_args_is_help=True,
 )
 app.add_typer(namespace_app)
@@ -39,7 +39,7 @@ def version_callback(value: bool) -> None:
 def main(
     version: Annotated[
         bool | None,
-        typer.Option("--version", callback=version_callback, is_eager=True),
+        typer.Option("--version", callback=version_callback, is_eager=True, help="Show version and exit."),
     ] = None,
     output: Annotated[
         str | None,
@@ -1024,7 +1024,7 @@ def chain(
         typer.Option("--on-failure", help="Failure mode: 'stop' (default) or 'continue'"),
     ] = None,
 ) -> None:
-    """Chain commands together."""
+    """Chain commands to run sequentially after each other."""
     from datetime import UTC, datetime
 
     from navigator.config import load_config
@@ -1163,7 +1163,7 @@ def logs(
         bool, typer.Option("--tail", help="Show full content of last log")
     ] = False,
 ) -> None:
-    """View execution logs."""
+    """View execution logs for a command."""
     from navigator.config import load_config
     from navigator.execution_logger import list_execution_logs, read_log_content
 
@@ -1271,7 +1271,7 @@ def service(
         typer.Argument(help="Action: status, start, stop, restart"),
     ],
 ) -> None:
-    """Manage the Navigator systemd service."""
+    """Manage the Navigator systemd service (start, stop, restart, status)."""
     from navigator.service import service_control
 
     try:
@@ -1295,7 +1295,7 @@ def doctor(
         typer.Option("--fix", help="Apply safe auto-fixes for common issues"),
     ] = False,
 ) -> None:
-    """Verify system health."""
+    """Verify system health and diagnose configuration issues."""
     from navigator.config import load_config
     from navigator.doctor import run_doctor
     from navigator.output import is_json, json_response
