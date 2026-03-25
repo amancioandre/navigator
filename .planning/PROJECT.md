@@ -33,6 +33,7 @@ Autonomous task orchestration — registered commands run on schedule or on file
 
 ### Active
 
+- ✓ MkDocs documentation site scaffold with Material theme, CLI auto-generation plugin, and strict build validation — Phase 11
 - [ ] MkDocs documentation site with full project docs (installation, configuration, CLI reference, guides)
 - [ ] Comprehensive README.md with installation instructions, quick start, and usage examples
 - [ ] CLI reference documentation for all commands and subcommands
@@ -112,4 +113,4 @@ This document evolves at phase transitions and milestone boundaries.
 - Getting started tutorial
 
 ---
-*Last updated: 2026-03-25 after milestone v1.1 start*
+*Last updated: 2026-03-25 after Phase 11 (Docs Foundation) completion*
