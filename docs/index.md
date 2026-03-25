@@ -6,4 +6,5 @@ Navigator schedules, triggers, and chains Claude Code sessions with proper conte
 
 ## Quick Links
 
+- [Getting Started](getting-started/installation.md) -- installation and first command
 - [CLI Reference](reference/cli.md) -- complete command documentation
