@@ -74,7 +74,9 @@ Plans:
   2. The installation guide includes a verification step using `navigator doctor`
   3. A quick start tutorial walks through registering a command, executing it, and verifying output end-to-end
   4. The tutorial is self-contained and completable without reading any other page
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 13-01-PLAN.md — Installation guide, quick start tutorial, and nav updates
 
 ### Phase 14: Feature Guides
 **Goal**: Each major Navigator capability has a task-oriented guide with real examples
@@ -120,7 +122,7 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 |-------|----------------|--------|-----------|
 | 11. Docs Foundation | 0/1 | Complete    | 2026-03-25 |
 | 12. CLI Reference | 0/1 | Complete    | 2026-03-25 |
-| 13. Getting Started | 0/0 | Not started | - |
+| 13. Getting Started | 0/1 | Not started | - |
 | 14. Feature Guides | 0/0 | Not started | - |
 | 15. README | 0/0 | Not started | - |
 | 16. Docs Maintenance | 0/0 | Not started | - |
