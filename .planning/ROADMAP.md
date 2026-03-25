@@ -122,7 +122,7 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 |-------|----------------|--------|-----------|
 | 11. Docs Foundation | 0/1 | Complete    | 2026-03-25 |
 | 12. CLI Reference | 0/1 | Complete    | 2026-03-25 |
-| 13. Getting Started | 1/1 | Complete   | 2026-03-25 |
+| 13. Getting Started | 1/1 | Complete    | 2026-03-25 |
 | 14. Feature Guides | 0/0 | Not started | - |
 | 15. README | 0/0 | Not started | - |
 | 16. Docs Maintenance | 0/0 | Not started | - |
