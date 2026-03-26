@@ -1,6 +1,6 @@
 site_name: Navigator
 site_description: Autonomous task orchestrator for Claude Code sessions
-site_url: ""
+site_url: https://amancioandre.github.io/navigator/
 
 theme:
   name: material
