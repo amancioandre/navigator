@@ -34,7 +34,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 11: Docs Foundation** - MkDocs scaffold with Material theme, dependency group, and strict build validation (completed 2026-03-25)
 - [x] **Phase 12: CLI Reference** - Auto-generated CLI reference covering all commands and subcommands (completed 2026-03-25)
 - [x] **Phase 13: Getting Started** - Installation guide and quick start tutorial (completed 2026-03-25)
-- [ ] **Phase 14: Feature Guides** - Seven task-oriented guides for each major Navigator capability
+- [x] **Phase 14: Feature Guides** - Seven task-oriented guides for each major Navigator capability (completed 2026-03-26)
 - [ ] **Phase 15: README** - Comprehensive README.md with install, quick start, and links to docs site
 - [ ] **Phase 16: Docs Maintenance** - Strict build enforcement and maintenance conventions for future milestones
 
@@ -94,7 +94,7 @@ Plans:
 Plans:
 - [x] 14-01-PLAN.md — Scheduling, file watching, and chaining guides with nav setup
 - [x] 14-02-PLAN.md — Secrets, namespaces, and systemd guides
-- [ ] 14-03-PLAN.md — Configuration reference and cross-link updates
+- [x] 14-03-PLAN.md — Configuration reference and cross-link updates
 
 ### Phase 15: README
 **Goal**: The project README serves as a concise entry point that links to the docs site for depth
@@ -127,6 +127,6 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 | 11. Docs Foundation | 0/1 | Complete    | 2026-03-25 |
 | 12. CLI Reference | 0/1 | Complete    | 2026-03-25 |
 | 13. Getting Started | 1/1 | Complete    | 2026-03-25 |
-| 14. Feature Guides | 2/3 | In Progress|  |
+| 14. Feature Guides | 3/4 | Complete    | 2026-03-26 |
 | 15. README | 0/0 | Not started | - |
 | 16. Docs Maintenance | 0/0 | Not started | - |
