@@ -36,6 +36,7 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - ✓ MkDocs documentation site scaffold with Material theme, CLI auto-generation plugin, and strict build validation — Phase 11
 - ✓ Auto-generated CLI reference from Typer app covering all commands and subcommands — Phase 12
 - ✓ Getting started docs: installation guide (uv/pip/global) and quick start tutorial — Phase 13
+- ✓ Feature guides for all 7 capabilities (scheduling, watching, chaining, secrets, namespaces, systemd, config) — Phase 14
 - [ ] MkDocs documentation site with full project docs (installation, configuration, CLI reference, guides)
 - [ ] Comprehensive README.md with installation instructions, quick start, and usage examples
 - [ ] CLI reference documentation for all commands and subcommands
@@ -115,4 +116,4 @@ This document evolves at phase transitions and milestone boundaries.
 - Getting started tutorial
 
 ---
-*Last updated: 2026-03-25 after Phase 13 (Getting Started) completion*
+*Last updated: 2026-03-26 after Phase 14 (Feature Guides) completion*
