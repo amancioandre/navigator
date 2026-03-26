@@ -107,7 +107,7 @@ Plans:
   4. README is under 150 lines and links to the docs site for CLI reference and detailed guides
 **Plans**: 1 plan
 Plans:
-- [ ] 15-01-PLAN.md — README.md with install, quick start, features, and docs links
+- [ ] 16-01-PLAN.md — Docs site validation and maintenance conventions
 
 ### Phase 16: Docs Maintenance
 **Goal**: Documentation stays current as Navigator evolves beyond this milestone
@@ -119,7 +119,7 @@ Plans:
   3. A documented convention exists for updating docs when CLI commands change in future milestones
 **Plans**: 1 plan
 Plans:
-- [ ] 15-01-PLAN.md — README.md with install, quick start, features, and docs links
+- [ ] 16-01-PLAN.md — Docs site validation and maintenance conventions
 
 ## Progress
 
@@ -133,4 +133,4 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 | 13. Getting Started | 1/1 | Complete    | 2026-03-25 |
 | 14. Feature Guides | 3/4 | Complete    | 2026-03-26 |
 | 15. README | 0/1 | Complete    | 2026-03-26 |
-| 16. Docs Maintenance | 0/0 | Not started | - |
+| 16. Docs Maintenance | 0/1 | Not started | - |
