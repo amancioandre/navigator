@@ -133,4 +133,4 @@ Phases execute in numeric order: 11 -> 12 -> 13 -> 14 -> 15 -> 16
 | 13. Getting Started | 1/1 | Complete    | 2026-03-25 |
 | 14. Feature Guides | 3/4 | Complete    | 2026-03-26 |
 | 15. README | 0/1 | Complete    | 2026-03-26 |
-| 16. Docs Maintenance | 0/1 | Not started | - |
+| 16. Docs Maintenance | 0/1 | Planned    |  |

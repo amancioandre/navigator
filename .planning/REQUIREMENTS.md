@@ -51,7 +51,7 @@ Requirements for documentation milestone. Each maps to roadmap phases.
 
 ### Maintenance
 
-- [ ] **MAINT-01**: Documentation maintenance conventions established (future milestones update docs, strict build in workflow)
+- [x] **MAINT-01**: Documentation maintenance conventions established (future milestones update docs, strict build in workflow)
 
 ## Future Requirements
 
@@ -96,7 +96,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GUIDE-06 | Phase 14 | Complete |
 | GUIDE-07 | Phase 14 | Complete |
 | READ-01 | Phase 15 | Complete |
-| MAINT-01 | Phase 16 | Pending |
+| MAINT-01 | Phase 16 | Complete |
 
 **Coverage:**
 - v1.1 requirements: 14 total

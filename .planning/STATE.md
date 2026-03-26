@@ -2,13 +2,13 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Documentation
-status: Ready to plan
-stopped_at: Completed 15-01-PLAN.md
-last_updated: "2026-03-26T00:28:16.061Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 16-01-PLAN.md
+last_updated: "2026-03-26T00:36:42.561Z"
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 8
+  total_plans: 9
   completed_plans: 8
 ---
 
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Autonomous task orchestration -- registered commands run on schedule or on file changes, with the right context and secrets, without human intervention unless something fails.
-**Current focus:** Phase 15 — README
+**Current focus:** Phase 16 — Docs Maintenance
 
 ## Current Position
 
-Phase: 16
-Plan: Not started
+Phase: 16 (Docs Maintenance) — EXECUTING
+Plan: 1 of 1
 
 ## Performance Metrics
 
@@ -59,6 +59,8 @@ Recent decisions affecting current work:
 - [Phase 14]: Cross-links to future guides use plain text to pass strict build; converted to real links when target guides exist
 - [Phase 14]: Cross-links to future guides use plain text to pass strict build
 - [Phase 15]: README at 79 lines for scannability; links to docs site for depth
+- [Phase 16]: pymdown-extensions added to docs dependency group for strict build
+- [Phase 16]: Documentation conventions use bullet-point format for agent and human scannability
 
 ### Pending Todos
 
@@ -70,6 +72,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T00:26:03.853Z
-Stopped at: Completed 15-01-PLAN.md
+Last session: 2026-03-26T00:36:42.559Z
+Stopped at: Completed 16-01-PLAN.md
 Resume file: None
