@@ -2,7 +2,7 @@
 
 ## What This Is
 
-A private, Python-based orchestrator that schedules, triggers, and chains Claude Code sessions with proper context, secrets, and permissions. Navigator manages the system's actual crontab and file watchers to run registered commands — wrapping each invocation with environment variables, secret injection, and pre-configured tool permissions. It is globally installed, never exposed to the public internet, and controlled via local CLI or a private messaging bot (Telegram/Discord).
+A private, Python-based orchestrator that schedules, triggers, and chains Claude Code sessions with proper context, secrets, and permissions. Navigator manages the system's actual crontab and file watchers to run registered commands — wrapping each invocation with environment variables, secret injection, and pre-configured tool permissions. It is globally installed, never exposed to the public internet, and controlled via local CLI or a private messaging bot (Telegram/Discord). Fully documented with MkDocs site, CLI reference, feature guides, and getting started tutorial.
 
 ## Core Value
 
@@ -24,31 +24,19 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - ✓ Retry with backoff (`--retries N`) on failure — Phase 4
 - ✓ Cron-based scheduling via system crontab — Navigator reads and manages real crontab entries — Phase 5
 - ✓ File/folder watching as a trigger pattern (inotify via watchdog), with debounce, self-trigger guard, time-window constraints, and ignore patterns — Phase 6
-
 - ✓ Multi-project namespacing — commands namespaced by project with isolated secrets and cross-namespace references — Phase 7
-
 - ✓ Command chaining — sequential triggers with shared state, depth limits, cycle detection, correlation IDs — Phase 8
-
 - ✓ Survives reboots — systemd user service with auto-restart and linger support — Phase 9
+- ✓ MkDocs documentation site with Material theme, auto-generated CLI reference, installation guide, quick start tutorial, 7 feature guides, README, and maintenance conventions — v1.1
 
 ### Active
 
-- ✓ MkDocs documentation site scaffold with Material theme, CLI auto-generation plugin, and strict build validation — Phase 11
-- ✓ Auto-generated CLI reference from Typer app covering all commands and subcommands — Phase 12
-- ✓ Getting started docs: installation guide (uv/pip/global) and quick start tutorial — Phase 13
-- ✓ Feature guides for all 7 capabilities (scheduling, watching, chaining, secrets, namespaces, systemd, config) — Phase 14
-- ✓ Comprehensive README.md (79 lines) with installation, quick start, feature overview, and docs links — Phase 15
-- ✓ Documentation maintenance conventions established in CLAUDE.md — Phase 16
-- ✓ MkDocs documentation site with full project docs (installation, configuration, CLI reference, guides) — v1.1
-- [ ] CLI reference documentation for all commands and subcommands
-- [ ] Feature guides for scheduling, watching, chaining, secrets, namespaces, and systemd
-- [ ] Getting started / quick start tutorial
+(None — next milestone requirements to be defined via `/gsd:new-milestone`)
 
 ### Future
 
 - [ ] Push notifications on failure via messaging bot
 - [ ] Remote CLI via private messaging bot (Telegram/Discord) — full CRUD, long-polling, never exposed publicly
-- [ ] Globally installed via pip (`pip install navigator`, `navigator` CLI command)
 - [ ] Claude Code can understand and invoke the CLI API from other sessions
 - [ ] Exposes skills usable from Claude Code sessions
 
@@ -67,6 +55,7 @@ Autonomous task orchestration — registered commands run on schedule or on file
 - **Obsidian integration:** Other Claude Code sessions running from an Obsidian vault will call Navigator's CLI to register and manage recurring/one-off tasks.
 - **PAI comparison:** Daniel Miessler's PAI is a contextual wrapper (identity, memory, learning around Claude Code). Navigator is an operational orchestrator (scheduling, triggering, chaining, secret management). They are complementary — PAI skills could run inside Navigator-orchestrated sessions.
 - **Platform:** Currently Pop!_OS/Ubuntu personal machine, will promote to VPS later. Never allow remote access directly — only through messaging bot APIs.
+- **Current state:** v1.0 core + v1.1 documentation shipped. 320 tests passing. 21 CLI commands across 18 top-level + 3 namespace subcommands. MkDocs docs site with 11 pages, auto-generated CLI reference, 7 feature guides.
 
 ## Constraints
 
@@ -81,11 +70,14 @@ Autonomous task orchestration — registered commands run on schedule or on file
 
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
-| Python over TypeScript | Globally installable via pip, user preference | — Pending |
-| System crontab over internal scheduler | Don't reinvent scheduling, leverage battle-tested system tooling | — Pending |
+| Python over TypeScript | Globally installable via pip, user preference | ✓ Good |
+| System crontab over internal scheduler | Don't reinvent scheduling, leverage battle-tested system tooling | ✓ Good |
 | Telegram/Discord bot over web API | Privacy-first, never expose to public internet, use existing encrypted channels | — Pending |
-| Navigator (name) | Dune reference — Guild Navigators fold space, routing tasks through the right paths autonomously | — Pending |
-| Complement PAI, don't compete | PAI handles context/identity/memory; Navigator handles scheduling/triggering/orchestration | — Pending |
+| Navigator (name) | Dune reference — Guild Navigators fold space, routing tasks through the right paths autonomously | ✓ Good |
+| Complement PAI, don't compete | PAI handles context/identity/memory; Navigator handles scheduling/triggering/orchestration | ✓ Good |
+| MkDocs + Material theme for docs | Standard Python docs toolchain, auto-generated CLI reference via mkdocs-click | ✓ Good |
+| mkdocs-click over mkdocs-typer2 | More mature, under mkdocs org, validated against Navigator's nested subcommand groups | ✓ Good |
+| README capped at 150 lines | Links to docs site for depth; prevents README bloat | ✓ Good (79 lines) |
 
 ## Evolution
 
@@ -105,16 +97,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-## Current Milestone: v1.1 Documentation
-
-**Goal:** Comprehensive project documentation using MkDocs and a README.md with full installation and usage instructions.
-
-**Target features:**
-- MkDocs documentation site with full project docs
-- Comprehensive README.md with installation, quick start, usage examples
-- CLI reference for all commands and subcommands
-- Feature guides for each major capability (scheduling, watching, chaining, secrets, namespaces, systemd)
-- Getting started tutorial
-
----
-*Last updated: 2026-03-26 after Phase 16 (Docs Maintenance) — v1.1 milestone complete*
+*Last updated: 2026-03-26 after v1.1 Documentation milestone complete*

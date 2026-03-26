@@ -1,5 +1,23 @@
 # Milestones
 
+## v1.1 Documentation (Shipped: 2026-03-26)
+
+**Phases completed:** 6 phases, 9 plans, 16 tasks
+
+**Key accomplishments:**
+
+- MkDocs site with Material theme and auto-generated CLI reference for all 21 Navigator commands via mkdocs-click
+- Enhanced all 21 CLI help strings for clarity, fixed --version help=None rendering as N/A, verified mkdocs-click reference page renders complete command tree
+- Installation guide with uv/pip methods and navigator doctor verification, plus three-step quick start tutorial (register, dry-run, cleanup)
+- Three feature guides (scheduling, file watching, chaining) with consistent structure, real CLI examples, and Guides nav section in mkdocs.yml
+- Three infrastructure guides covering .env secret injection with environment isolation, namespace CRUD with auto-secrets resolution, and systemd service lifecycle with reboot survival
+- Configuration reference guide with all 6 config.toml options, 7-guide nav finalized, and coming-soon text replaced with real guide links
+- Replaced 6 stale "coming soon" placeholders with working markdown cross-links across 4 feature guide files
+- Project README.md with installation (uv + pip), 4-command quick start, and 7-feature overview linking to docs site
+- Strict mkdocs build validation with zero warnings and documentation maintenance conventions in CLAUDE.md for sustainable docs upkeep
+
+---
+
 ## v1.0 Navigator v1.0 (Shipped: 2026-03-25)
 
 **Phases completed:** 10 phases, 20 plans, 40 tasks
