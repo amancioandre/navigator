@@ -81,4 +81,4 @@ chmod 600 ~/.secrets/navigator/my-task.env
 ## What's Next
 
 - [Namespaces](namespaces.md) -- organize commands and secrets by project
-- Configuration guide -- customize `secrets_base_path` and other settings
+- [Configuration](configuration.md) -- customize `secrets_base_path` and other settings

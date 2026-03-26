@@ -103,7 +103,7 @@ Or use the `daemon` command directly:
 navigator daemon
 ```
 
-For persistent background operation, install the systemd service (see the Systemd Service guide, coming soon).
+For persistent background operation, install the systemd service (see the [Systemd Service](systemd.md) guide).
 
 ## Troubleshooting
 
@@ -116,4 +116,4 @@ For persistent background operation, install the systemd service (see the System
 ## What's Next
 
 - [Scheduling](scheduling.md) -- use time-based triggers instead of file events
-- Systemd Service -- run the watcher daemon persistently in the background (coming soon)
+- [Systemd Service](systemd.md) -- run the watcher daemon persistently in the background

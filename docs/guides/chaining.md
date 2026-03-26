@@ -140,5 +140,5 @@ This removes the `chain_next` link from the command. Downstream links are not af
 
 ## What's Next
 
-- Namespaces -- organize commands across projects with isolated secrets (coming soon)
-- Configuration -- adjust `max_chain_depth` and other settings (coming soon)
+- [Namespaces](namespaces.md) -- organize commands across projects with isolated secrets
+- [Configuration](configuration.md) -- adjust `max_chain_depth` and other settings

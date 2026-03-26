@@ -90,4 +90,4 @@ Removed schedule for 'my-task'
 ## What's Next
 
 - [Command Chaining](chaining.md) -- trigger commands after scheduled runs complete
-- Systemd Service -- ensure the Navigator daemon survives reboots (coming soon)
+- [Systemd Service](systemd.md) -- ensure the Navigator daemon survives reboots
