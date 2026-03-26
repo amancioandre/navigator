@@ -114,7 +114,14 @@ A private, Python-based orchestrator that schedules, triggers, and chains Claude
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
 ## Conventions
 
-Conventions not yet established. Will populate as patterns emerge during development.
+### Documentation Maintenance
+
+- **CLI command added/renamed/removed:** Update the Typer help string (mkdocs-click auto-generates from it). Run `uv run mkdocs build --strict` to verify.
+- **New feature added:** Create a guide in `docs/guides/` and add it to the `nav` section of `mkdocs.yml`.
+- **Feature removed:** Remove its guide from `docs/guides/` and from `mkdocs.yml` nav.
+- **CLI flags or arguments changed:** Verify the auto-generated CLI reference still renders correctly with `uv run mkdocs build --strict`.
+- **Validation command:** Always run `uv run mkdocs build --strict` before committing docs changes. Zero warnings required.
+- **README.md:** Must stay under 150 lines and link to the docs site for details.
 <!-- GSD:conventions-end -->
 
 <!-- GSD:architecture-start source:ARCHITECTURE.md -->
