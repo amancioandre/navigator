@@ -396,6 +396,7 @@ docs = [
     { name = "mkdocs" },
     { name = "mkdocs-click" },
     { name = "mkdocs-material" },
+    { name = "pymdown-extensions" },
 ]
 
 [package.metadata]
@@ -419,6 +420,7 @@ docs = [
     { name = "mkdocs", specifier = ">=1.6" },
     { name = "mkdocs-click", specifier = ">=0.9" },
     { name = "mkdocs-material", specifier = ">=9.7" },
+    { name = "pymdown-extensions", specifier = ">=10.21" },
 ]
 
 [[package]]

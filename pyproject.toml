@@ -44,4 +44,5 @@ docs = [
     "mkdocs>=1.6",
     "mkdocs-material>=9.7",
     "mkdocs-click>=0.9",
+    "pymdown-extensions>=10.21",
 ]
