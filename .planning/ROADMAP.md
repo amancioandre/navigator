@@ -105,7 +105,9 @@ Plans:
   2. README includes a quick start section with 4-5 commands showing the core workflow
   3. README includes a feature overview listing all major capabilities with one-line descriptions
   4. README is under 150 lines and links to the docs site for CLI reference and detailed guides
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 15-01-PLAN.md — README.md with install, quick start, features, and docs links
 
 ### Phase 16: Docs Maintenance
 **Goal**: Documentation stays current as Navigator evolves beyond this milestone
@@ -115,7 +117,9 @@ Plans:
   1. `mkdocs build --strict` passes with zero warnings across the complete docs site
   2. All docs pages are reachable from the navigation (no orphaned pages)
   3. A documented convention exists for updating docs when CLI commands change in future milestones
-**Plans**: TBD
+**Plans**: 1 plan
+Plans:
+- [ ] 15-01-PLAN.md — README.md with install, quick start, features, and docs links
 
 ## Progress
 
