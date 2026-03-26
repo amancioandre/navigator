@@ -47,7 +47,7 @@ Requirements for documentation milestone. Each maps to roadmap phases.
 
 ### README
 
-- [ ] **READ-01**: Comprehensive README.md with installation, quick start, feature overview, and links to docs site
+- [x] **READ-01**: Comprehensive README.md with installation, quick start, feature overview, and links to docs site
 
 ### Maintenance
 
@@ -95,7 +95,7 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GUIDE-05 | Phase 14 | Complete |
 | GUIDE-06 | Phase 14 | Complete |
 | GUIDE-07 | Phase 14 | Complete |
-| READ-01 | Phase 15 | Pending |
+| READ-01 | Phase 15 | Complete |
 | MAINT-01 | Phase 16 | Pending |
 
 **Coverage:**
