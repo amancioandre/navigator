@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import subprocess
 import sqlite3
+import subprocess
 from pathlib import Path
 from typing import Annotated
 
@@ -39,7 +39,9 @@ def version_callback(value: bool) -> None:
 def main(
     version: Annotated[
         bool | None,
-        typer.Option("--version", callback=version_callback, is_eager=True, help="Show version and exit."),
+        typer.Option(
+            "--version", callback=version_callback, is_eager=True, help="Show version and exit."
+        ),
     ] = None,
     output: Annotated[
         str | None,
@@ -353,7 +355,8 @@ def show(
 
         if cmd.namespace != parsed_ns:
             if is_json():
-                typer.echo(json_response("error", message=f"Command '{bare_name}' is in namespace '{cmd.namespace}', not '{parsed_ns}'."))
+                msg = f"Command '{bare_name}' is in namespace '{cmd.namespace}', not '{parsed_ns}'."
+                typer.echo(json_response("error", message=msg))
                 raise typer.Exit(code=1)
             console.print(
                 f"[red]Command '{bare_name}' is in namespace '{cmd.namespace}', "
@@ -597,7 +600,7 @@ def exec_command(
             raise typer.Exit(code=1)
 
         if dry_run:
-            from navigator.executor import build_command_args, build_clean_env
+            from navigator.executor import build_clean_env, build_command_args
             from navigator.secrets import load_secrets
 
             secrets = load_secrets(cmd.secrets)
