@@ -776,24 +776,42 @@ def schedule(
         )
         raise typer.Exit(code=1)
 
-    # Validate command exists and is active
+    # Parse qualified name (e.g., "myns:mycmd" -> namespace="myns", bare="mycmd")
     from navigator.config import load_config
     from navigator.db import get_command_by_name, get_connection, init_db
+    from navigator.namespace import parse_qualified_name
 
+    try:
+        parsed_ns, bare_name = parse_qualified_name(command)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
+
+    # Validate command exists and is active
     config = load_config()
     conn = get_connection(config.db_path)
     try:
         init_db(conn)
-        cmd = get_command_by_name(conn, command)
+        cmd = get_command_by_name(conn, bare_name)
         if cmd is None:
-            console.print(f"[red]Command '{command}' not found.[/red]")
+            console.print(f"[red]Command '{bare_name}' not found.[/red]")
             raise typer.Exit(code=1)
-        if cmd.status == "paused":
+
+        if cmd.namespace != parsed_ns:
             console.print(
-                f"[red]Command '{command}' is paused. "
-                f"Run `navigator resume {command}` first.[/red]"
+                f"[red]Command '{bare_name}' is in namespace '{cmd.namespace}', "
+                f"not '{parsed_ns}'.[/red]"
             )
             raise typer.Exit(code=1)
+
+        if cmd.status == "paused":
+            console.print(
+                f"[red]Command '{bare_name}' is paused. "
+                f"Run `navigator resume {bare_name}` first.[/red]"
+            )
+            raise typer.Exit(code=1)
+
+        scheduler_name = f"{cmd.namespace}:{bare_name}" if cmd.namespace != "default" else bare_name
     finally:
         conn.close()
 
@@ -804,7 +822,7 @@ def schedule(
     # --cron mode: schedule command
     if cron_expr:
         try:
-            manager.schedule(command, cron_expr)
+            manager.schedule(scheduler_name, cron_expr)
         except ValueError as exc:
             console.print(f"[red]{exc}[/red]")
             raise typer.Exit(code=1) from None
@@ -815,20 +833,20 @@ def schedule(
             console.print(f"[red]{exc}[/red]")
             raise typer.Exit(code=1) from None
         console.print(
-            f"[green]Scheduled '{command}' with cron: {cron_expr}[/green]"
+            f"[green]Scheduled '{scheduler_name}' with cron: {cron_expr}[/green]"
         )
         return
 
     # --remove mode: unschedule command
     if remove:
-        removed = manager.unschedule(command)
+        removed = manager.unschedule(scheduler_name)
         if removed:
             console.print(
-                f"[green]Removed schedule for '{command}'[/green]"
+                f"[green]Removed schedule for '{scheduler_name}'[/green]"
             )
         else:
             console.print(
-                f"[yellow]Command '{command}' was not scheduled.[/yellow]"
+                f"[yellow]Command '{scheduler_name}' was not scheduled.[/yellow]"
             )
 
 
