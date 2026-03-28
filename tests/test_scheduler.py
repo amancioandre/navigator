@@ -189,6 +189,74 @@ class TestLocking:
             lock_fd.close()
 
 
+class TestNamespaceScheduling:
+    """Tests for namespace-aware scheduling (qualified names like 'ns:cmd')."""
+
+    def test_schedule_namespaced_command(self, crontab_env):
+        """schedule('myns:mycmd', ...) creates entry with correct comment and exec command."""
+        mgr = crontab_env["manager"]
+        mgr.schedule("myns:mycmd", "*/5 * * * *")
+
+        cron = _read_tab(crontab_env["tab_file"])
+        jobs = list(cron.find_comment(f"{COMMENT_PREFIX}:myns:mycmd"))
+        assert len(jobs) == 1
+        assert "navigator exec myns:mycmd" in str(jobs[0].command)
+        assert str(jobs[0].slices) == "*/5 * * * *"
+
+    def test_unschedule_namespaced_command(self, crontab_env):
+        """unschedule('myns:mycmd') removes the namespaced entry."""
+        mgr = crontab_env["manager"]
+        mgr.schedule("myns:mycmd", "*/5 * * * *")
+
+        result = mgr.unschedule("myns:mycmd")
+        assert result is True
+
+        cron = _read_tab(crontab_env["tab_file"])
+        jobs = list(cron.find_comment(f"{COMMENT_PREFIX}:myns:mycmd"))
+        assert len(jobs) == 0
+
+    def test_schedule_default_namespace_unchanged(self, crontab_env):
+        """schedule('mycmd', ...) uses 'navigator:mycmd' comment, not 'navigator:default:mycmd'."""
+        mgr = crontab_env["manager"]
+        mgr.schedule("mycmd", "0 * * * *")
+
+        cron = _read_tab(crontab_env["tab_file"])
+        # Must use bare name, NOT default:mycmd
+        jobs_bare = list(cron.find_comment(f"{COMMENT_PREFIX}:mycmd"))
+        assert len(jobs_bare) == 1
+        assert "navigator exec mycmd" in str(jobs_bare[0].command)
+
+        # Ensure no entry with default: prefix
+        jobs_default = list(cron.find_comment(f"{COMMENT_PREFIX}:default:mycmd"))
+        assert len(jobs_default) == 0
+
+    def test_list_schedules_shows_qualified_name(self, crontab_env):
+        """list_schedules() returns qualified name 'myns:mycmd' for namespaced entries."""
+        mgr = crontab_env["manager"]
+        mgr.schedule("myns:mycmd", "*/5 * * * *")
+
+        schedules = mgr.list_schedules()
+        assert len(schedules) == 1
+        assert schedules[0]["command"] == "myns:mycmd"
+
+    def test_schedule_namespaced_idempotent(self, crontab_env):
+        """Scheduling 'myns:mycmd' twice replaces rather than duplicates."""
+        mgr = crontab_env["manager"]
+        mgr.schedule("myns:mycmd", "0 * * * *")
+        mgr.schedule("myns:mycmd", "*/10 * * * *")
+
+        cron = _read_tab(crontab_env["tab_file"])
+        jobs = list(cron.find_comment(f"{COMMENT_PREFIX}:myns:mycmd"))
+        assert len(jobs) == 1
+        assert str(jobs[0].slices) == "*/10 * * * *"
+
+    def test_unschedule_namespaced_not_found(self, crontab_env):
+        """unschedule('myns:mycmd') returns False when not scheduled."""
+        mgr = crontab_env["manager"]
+        result = mgr.unschedule("myns:mycmd")
+        assert result is False
+
+
 class TestNavigatorPath:
     """Tests for navigator binary resolution."""
 
