@@ -160,6 +160,8 @@ class TestExecuteCommand:
 
         mock_popen.assert_called_once()
         call_kwargs = mock_popen.call_args
+        # Verify absolute path is used as args[0] (resolved from shutil.which)
+        assert call_kwargs[0][0][0] == "/usr/bin/claude"
         assert call_kwargs.kwargs["cwd"] == str(tmp_path)
         assert call_kwargs.kwargs["text"] is True
         assert call_kwargs.kwargs["start_new_session"] is True

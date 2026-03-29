@@ -195,7 +195,8 @@ def execute_command(
     Raises:
         FileNotFoundError: If claude CLI is not on PATH or cwd does not exist.
     """
-    if shutil.which("claude") is None:
+    claude_path = shutil.which("claude")
+    if claude_path is None:
         msg = "claude CLI not found on PATH. Install Claude Code or verify PATH."
         raise FileNotFoundError(msg)
 
@@ -207,7 +208,7 @@ def execute_command(
 
     secrets = load_secrets(cmd.secrets)
     env = build_clean_env(secrets, extra_env=extra_env)
-    args = build_command_args(cmd.prompt, cmd.allowed_tools)
+    args = build_command_args(cmd.prompt, cmd.allowed_tools, claude_path=claude_path)
 
     max_retries = retries_override if retries_override is not None else config.default_retry_count
     timeout = timeout_override if timeout_override is not None else config.default_timeout
