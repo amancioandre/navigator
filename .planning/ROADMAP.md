@@ -2,9 +2,10 @@
 
 ## Milestones
 
-- ✅ **v1.0 Navigator Core** — Phases 1-10 (shipped 2026-03-25)
-- ✅ **v1.1 Documentation** — Phases 11-16 (shipped 2026-03-26)
-- 🚧 **v1.2 CI/CD Docs Publishing** — Phases 17-18 (in progress)
+- v1.0 MVP - Phases 1-10 (shipped 2026-03-25)
+- v1.1 Documentation - Phases 11-16 (shipped 2026-03-26)
+- v1.2 CI/CD Docs Publishing - Phases 17-18 (shipped 2026-03-26)
+- v1.2.1 Cron Scheduling Fixes - Phases 19-20 (in progress)
 
 ## Phases
 
@@ -15,69 +16,68 @@
 Decimal phases appear between their surrounding integers in numeric order.
 
 <details>
-<summary>v1.0 Navigator Core (Phases 1-10) - SHIPPED 2026-03-25</summary>
+<summary>v1.0 MVP (Phases 1-10) - SHIPPED 2026-03-25</summary>
 
-- [x] **Phase 1: Project Scaffold** - Installable Python package with CLI entry point and configuration
-- [x] **Phase 2: Command Registry** - Full CRUD for registered commands backed by SQLite
-- [x] **Phase 3: Execution Core** - Run registered commands as Claude Code subprocesses with secrets and clean environments
-- [x] **Phase 4: Execution Hardening** - Retry, timeouts, logging, and process lifecycle management
-- [x] **Phase 5: Cron Scheduling** - Schedule commands via real system crontab with lock-safe writes
-- [x] **Phase 6: File Watching** - Trigger commands on filesystem changes with debounce and guards
-- [x] **Phase 7: Namespacing** - Multi-project command isolation with per-namespace secrets
-- [x] **Phase 8: Command Chaining** - Sequential command triggers with depth limits and cycle detection
-- [x] **Phase 9: Daemon and systemd** - Persistent watcher daemon and systemd service installation
-- [x] **Phase 10: Operational Polish** - Health checks, JSON output, and dry-run for Claude Code agents
+See MILESTONES.md for details.
 
 </details>
 
 <details>
 <summary>v1.1 Documentation (Phases 11-16) - SHIPPED 2026-03-26</summary>
 
-- [x] **Phase 11: Docs Foundation** - MkDocs scaffold with Material theme, dependency group, and strict build validation (completed 2026-03-25)
-- [x] **Phase 12: CLI Reference** - Auto-generated CLI reference covering all commands and subcommands (completed 2026-03-25)
-- [x] **Phase 13: Getting Started** - Installation guide and quick start tutorial (completed 2026-03-25)
-- [x] **Phase 14: Feature Guides** - Seven task-oriented guides for each major Navigator capability (completed 2026-03-26)
-- [x] **Phase 15: README** - Comprehensive README.md with install, quick start, and links to docs site (completed 2026-03-26)
-- [x] **Phase 16: Docs Maintenance** - Strict build enforcement and maintenance conventions for future milestones (completed 2026-03-26)
+See MILESTONES.md for details.
 
 </details>
 
-### v1.2 CI/CD Docs Publishing (In Progress)
+<details>
+<summary>v1.2 CI/CD Docs Publishing (Phases 17-18) - SHIPPED 2026-03-26</summary>
 
-- [ ] **Phase 17: Docs Deployment Pipeline** - GitHub Actions workflow deploys MkDocs site to gh-pages with dependency caching
-- [ ] **Phase 18: PR Validation Gate** - Pull request docs build check with branch protection enforcement
+See MILESTONES.md for details.
+
+</details>
+
+### v1.2.1 Cron Scheduling Fixes (In Progress)
+
+**Milestone Goal:** Fix cron scheduling bugs that break real-world command execution -- namespace-aware scheduling, PATH resolution, and failure diagnostics.
+
+- [x] **Phase 19: Namespace-Aware Scheduling** - Fix schedule/unschedule to work with qualified namespace names (completed 2026-03-28)
+- [ ] **Phase 20: Cron Execution & Diagnostics** - Resolve claude binary path for cron and log execution failures
 
 ## Phase Details
 
-### Phase 17: Docs Deployment Pipeline
-**Goal**: Pushing to master automatically publishes the docs site to GitHub Pages
-**Depends on**: Phase 16 (docs site must exist and build cleanly)
-**Requirements**: DEPLOY-01, DEPLOY-02, DEPLOY-03, DEPLOY-04
+### Phase 19: Namespace-Aware Scheduling
+**Goal**: Users can schedule and unschedule namespaced commands using qualified names
+**Depends on**: Nothing (independent bug fix)
+**Requirements**: SCHED-01, SCHED-02, SCHED-03
 **Success Criteria** (what must be TRUE):
-  1. Pushing a commit to master triggers a GitHub Actions workflow that builds and deploys the MkDocs site to gh-pages
-  2. The docs site is accessible at the GitHub Pages URL after a successful deployment
-  3. Subsequent workflow runs use cached uv/pip dependencies (visible as cache hit in Actions logs)
-  4. The deploy workflow result appears as a commit status check on the master branch
-**Plans:** 1 plan
+  1. User can run `navigator schedule ns:cmd --cron "..."` and it succeeds without error
+  2. The resulting crontab entry contains `navigator exec ns:cmd` (qualified name preserved)
+  3. User can run `navigator schedule ns:cmd --remove` and the crontab entry is removed
+  4. Existing non-namespaced scheduling continues to work unchanged
+**Plans:** 1/1 plans complete
 Plans:
-- [ ] 17-01-PLAN.md — Create docs deployment workflow and configure GitHub Pages
+- [x] 19-01-PLAN.md -- Fix schedule/unschedule to parse qualified namespace names (tests + CLI fix)
 
-### Phase 18: PR Validation Gate
-**Goal**: Pull requests cannot merge with broken docs, enforced by CI and branch protection
-**Depends on**: Phase 17
-**Requirements**: VALID-01, VALID-02
+### Phase 20: Cron Execution & Diagnostics
+**Goal**: Cron-triggered commands find the claude binary and failed executions produce diagnostic logs
+**Depends on**: Nothing (independent of Phase 19)
+**Requirements**: CRON-01, CRON-02, DIAG-01, DIAG-02
 **Success Criteria** (what must be TRUE):
-  1. Opening or updating a PR triggers a docs build with `--strict` that fails if any MkDocs warnings exist
-  2. A PR with broken docs (missing links, bad config) shows a failing check and cannot be merged
-  3. Branch protection rule on master requires the docs build check to pass before merge is allowed
-**Plans**: TBD
+  1. A command scheduled via cron executes successfully even with cron's minimal PATH (`/usr/bin:/bin`)
+  2. Navigator resolves `claude` to its absolute path at execution time (not registration time)
+  3. When a child process fails to start (binary not found, permission denied), an execution log entry is written with the error details
+  4. User can view failed execution details via `navigator logs <command>` including the failure reason
+**Plans:** 1/2 plans executed
+Plans:
+- [x] 20-01-PLAN.md -- Resolve claude binary to absolute path in build_command_args (CRON-01, CRON-02)
+- [ ] 20-02-PLAN.md -- Add OSError handling and error field to execution logs (DIAG-01, DIAG-02)
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 17 → 18
+Phases execute in numeric order: 19 -> 20
 
-| Phase | Plans Complete | Status | Completed |
-|-------|----------------|--------|-----------|
-| 17. Docs Deployment Pipeline | 0/1 | Planned | - |
-| 18. PR Validation Gate | 0/0 | Not started | - |
+| Phase | Milestone | Plans Complete | Status | Completed |
+|-------|-----------|----------------|--------|-----------|
+| 19. Namespace-Aware Scheduling | v1.2.1 | 1/1 | Complete    | 2026-03-28 |
+| 20. Cron Execution & Diagnostics | v1.2.1 | 1/2 | In Progress|  |
