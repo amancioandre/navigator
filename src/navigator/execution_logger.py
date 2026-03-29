@@ -17,6 +17,7 @@ class LogEntry:
     exit_code: int
     duration: str
     attempt: int
+    error: str | None = None
 
 
 def write_execution_log(
@@ -27,6 +28,7 @@ def write_execution_log(
     duration: float,
     stdout: str,
     stderr: str,
+    error: str | None = None,
 ) -> Path:
     """Write a per-execution log file with metadata header and combined output.
 
@@ -47,6 +49,8 @@ def write_execution_log(
         f"exit_code: {returncode}",
         f"duration: {duration:.2f}s",
     ]
+    if error:
+        header_lines.append(f"error: {error}")
 
     combined_output = ""
     if stdout:
@@ -101,6 +105,7 @@ def list_execution_logs(
                 exit_code=int(fields.get("exit_code", "-1")),
                 duration=fields.get("duration", "0.00s"),
                 attempt=int(fields.get("attempt", "0")),
+                error=fields.get("error"),
             )
         )
 

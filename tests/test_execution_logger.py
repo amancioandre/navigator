@@ -101,3 +101,51 @@ class TestWriteExecutionLog:
         # Verify content is different
         assert "a" in p1.read_text()
         assert "b" in p2.read_text()
+
+
+class TestErrorField:
+    """Tests for optional error field in execution logs."""
+
+    def test_write_log_with_error_field(self, tmp_path: Path) -> None:
+        """write_execution_log with error includes error line in header."""
+        log_path = write_execution_log(
+            tmp_path, "err-cmd", 1, -1, 0.0, "", "",
+            error="FileNotFoundError: /usr/bin/claude",
+        )
+        text = log_path.read_text()
+        header = text.split("---\n", 1)[0]
+        assert "error: FileNotFoundError: /usr/bin/claude" in header
+
+    def test_write_log_without_error_field(self, tmp_path: Path) -> None:
+        """write_execution_log without error param produces no error line."""
+        log_path = write_execution_log(
+            tmp_path, "ok-cmd", 1, 0, 1.0, "out", "",
+        )
+        text = log_path.read_text()
+        assert "error:" not in text
+
+    def test_write_log_error_none(self, tmp_path: Path) -> None:
+        """write_execution_log with error=None produces no error line."""
+        log_path = write_execution_log(
+            tmp_path, "ok-cmd", 1, 0, 1.0, "out", "",
+            error=None,
+        )
+        text = log_path.read_text()
+        assert "error:" not in text
+
+    def test_list_logs_parses_error_field(self, tmp_path: Path) -> None:
+        """list_execution_logs parses error field into LogEntry.error."""
+        write_execution_log(
+            tmp_path, "parse-cmd", 1, -1, 0.0, "", "",
+            error="FileNotFoundError: /usr/bin/claude",
+        )
+        entries = list_execution_logs(tmp_path, "parse-cmd")
+        assert len(entries) == 1
+        assert entries[0].error == "FileNotFoundError: /usr/bin/claude"
+
+    def test_list_logs_no_error_field(self, tmp_path: Path) -> None:
+        """list_execution_logs returns error=None for logs without error."""
+        write_execution_log(tmp_path, "ok-cmd", 1, 0, 1.0, "out", "")
+        entries = list_execution_logs(tmp_path, "ok-cmd")
+        assert len(entries) == 1
+        assert entries[0].error is None
