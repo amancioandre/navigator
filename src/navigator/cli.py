@@ -605,7 +605,10 @@ def exec_command(
 
             secrets = load_secrets(cmd.secrets)
             env = build_clean_env(secrets)
-            args = build_command_args(cmd.prompt, cmd.allowed_tools)
+            import shutil
+
+            claude_path = shutil.which("claude") or "claude"
+            args = build_command_args(cmd.prompt, cmd.allowed_tools, claude_path=claude_path)
 
             dry_run_data = {
                 "command_name": cmd.name,
@@ -1187,9 +1190,16 @@ def logs(
     """View execution logs for a command."""
     from navigator.config import load_config
     from navigator.execution_logger import list_execution_logs, read_log_content
+    from navigator.namespace import parse_qualified_name
+
+    try:
+        _ns, bare_name = parse_qualified_name(name)
+    except ValueError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from None
 
     config = load_config()
-    entries = list_execution_logs(config.log_dir, name, count=count)
+    entries = list_execution_logs(config.log_dir, bare_name, count=count)
 
     from navigator.output import is_json, json_response
 

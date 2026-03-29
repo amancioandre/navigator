@@ -1166,7 +1166,7 @@ class TestDryRun:
         # Mock build functions so we don't need real claude binary
         monkeypatch.setattr(
             "navigator.executor.build_command_args",
-            lambda prompt, tools: ["claude", "-p", prompt, "--print"],
+            lambda prompt, tools, claude_path="claude": ["claude", "-p", prompt, "--print"],
         )
         monkeypatch.setattr(
             "navigator.executor.build_clean_env",
@@ -1198,7 +1198,7 @@ class TestDryRun:
         monkeypatch.setattr("navigator.executor.execute_command", mock_execute)
         monkeypatch.setattr(
             "navigator.executor.build_command_args",
-            lambda prompt, tools: ["claude", "-p", prompt, "--print"],
+            lambda prompt, tools, claude_path="claude": ["claude", "-p", prompt, "--print"],
         )
         monkeypatch.setattr(
             "navigator.executor.build_clean_env",
@@ -1222,7 +1222,7 @@ class TestDryRun:
 
         monkeypatch.setattr(
             "navigator.executor.build_command_args",
-            lambda prompt, tools: ["claude", "-p", prompt, "--print"],
+            lambda prompt, tools, claude_path="claude": ["claude", "-p", prompt, "--print"],
         )
         monkeypatch.setattr(
             "navigator.executor.build_clean_env",
@@ -1253,7 +1253,7 @@ class TestDryRun:
 
         monkeypatch.setattr(
             "navigator.executor.build_command_args",
-            lambda prompt, tools: ["claude", "-p", prompt, "--print"],
+            lambda prompt, tools, claude_path="claude": ["claude", "-p", prompt, "--print"],
         )
         monkeypatch.setattr(
             "navigator.executor.build_clean_env",
