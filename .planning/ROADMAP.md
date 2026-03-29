@@ -41,7 +41,7 @@ See MILESTONES.md for details.
 **Milestone Goal:** Fix cron scheduling bugs that break real-world command execution -- namespace-aware scheduling, PATH resolution, and failure diagnostics.
 
 - [x] **Phase 19: Namespace-Aware Scheduling** - Fix schedule/unschedule to work with qualified namespace names (completed 2026-03-28)
-- [ ] **Phase 20: Cron Execution & Diagnostics** - Resolve claude binary path for cron and log execution failures
+- [x] **Phase 20: Cron Execution & Diagnostics** - Resolve claude binary path for cron and log execution failures (completed 2026-03-29)
 
 ## Phase Details
 
@@ -67,10 +67,10 @@ Plans:
   2. Navigator resolves `claude` to its absolute path at execution time (not registration time)
   3. When a child process fails to start (binary not found, permission denied), an execution log entry is written with the error details
   4. User can view failed execution details via `navigator logs <command>` including the failure reason
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 20-01-PLAN.md -- Resolve claude binary to absolute path in build_command_args (CRON-01, CRON-02)
-- [ ] 20-02-PLAN.md -- Add OSError handling and error field to execution logs (DIAG-01, DIAG-02)
+- [x] 20-02-PLAN.md -- Add OSError handling and error field to execution logs (DIAG-01, DIAG-02)
 
 ## Progress
 
@@ -80,4 +80,4 @@ Phases execute in numeric order: 19 -> 20
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 19. Namespace-Aware Scheduling | v1.2.1 | 1/1 | Complete    | 2026-03-28 |
-| 20. Cron Execution & Diagnostics | v1.2.1 | 1/2 | In Progress|  |
+| 20. Cron Execution & Diagnostics | v1.2.1 | 2/2 | Complete   | 2026-03-29 |

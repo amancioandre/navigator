@@ -1200,6 +1200,7 @@ def logs(
                 "exit_code": e.exit_code,
                 "duration": e.duration,
                 "attempt": e.attempt,
+                **({"error": e.error} if e.error else {}),
             }
             for e in entries
         ]
@@ -1215,11 +1216,16 @@ def logs(
         console.print(content)
         return
 
+    # Check if any entry has an error to show the Error column
+    has_errors = any(e.error for e in entries)
+
     table = Table(title=f"Execution Logs: {name}")
     table.add_column("Timestamp", style="dim")
     table.add_column("Exit Code")
     table.add_column("Duration", style="dim")
     table.add_column("Attempt", style="dim")
+    if has_errors:
+        table.add_column("Error", style="red")
 
     for entry in entries:
         if entry.exit_code == 0:
@@ -1229,12 +1235,16 @@ def logs(
         else:
             code_style = "red"
 
-        table.add_row(
+        row = [
             entry.timestamp,
             f"[{code_style}]{entry.exit_code}[/{code_style}]",
             entry.duration,
             str(entry.attempt),
-        )
+        ]
+        if has_errors:
+            row.append(entry.error or "")
+
+        table.add_row(*row)
 
     console.print(table)
 

@@ -2,15 +2,15 @@
 gsd_state_version: 1.0
 milestone: v1.2.1
 milestone_name: Cron Scheduling Fixes
-status: executing
-stopped_at: Completed 20-01-PLAN.md
-last_updated: "2026-03-29T01:10:58.722Z"
+status: verifying
+stopped_at: Completed 20-02-PLAN.md
+last_updated: "2026-03-29T01:14:33.210Z"
 last_activity: 2026-03-29
 progress:
   total_phases: 2
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 3
-  completed_plans: 2
+  completed_plans: 3
   percent: 0
 ---
 
@@ -27,7 +27,7 @@ See: .planning/PROJECT.md (updated 2026-03-28)
 
 Phase: 20 (Cron Execution & Diagnostics) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 Last activity: 2026-03-29
 
 Progress: [░░░░░░░░░░] 0%
@@ -58,6 +58,7 @@ Recent decisions affecting current work:
 - [Milestone v1.2.1]: Bug fix milestone sourced from GitHub issues #1 and #2
 - [Phase 19]: Scheduler is name-agnostic; all namespace fixes confined to CLI layer
 - [Phase 20]: claude_path defaults to 'claude' for backward compat; reuse shutil.which result as variable
+- [Phase 20]: Catch OSError (parent class) in _run_once to handle all subprocess startup failures uniformly
 
 ### Pending Todos
 
@@ -69,6 +70,6 @@ None.
 
 ## Session Continuity
 
-Last session: 2026-03-29T01:10:58.720Z
-Stopped at: Completed 20-01-PLAN.md
+Last session: 2026-03-29T01:14:33.208Z
+Stopped at: Completed 20-02-PLAN.md
 Resume file: None
