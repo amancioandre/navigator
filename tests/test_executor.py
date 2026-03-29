@@ -15,6 +15,7 @@ from navigator.executor import (
     ENV_WHITELIST,
     ExecutionResult,
     _active_processes,
+    _run_once,
     build_clean_env,
     build_command_args,
     execute_command,
@@ -451,3 +452,90 @@ class TestProcessGroups:
 
         # PID should be removed after execution completes
         assert 54321 not in _active_processes
+
+
+class TestStartupFailure:
+    """Tests for _run_once handling OSError from Popen."""
+
+    @patch("navigator.executor.subprocess.Popen")
+    def test_run_once_catches_file_not_found(self, mock_popen):
+        """_run_once returns (-1, '', error_msg) when Popen raises FileNotFoundError."""
+        mock_popen.side_effect = FileNotFoundError("[Errno 2] No such file or directory: '/bad/path'")
+        rc, stdout, stderr = _run_once(["/bad/path", "-p", "test"], {}, "/tmp", None)
+        assert rc == -1
+        assert stdout == ""
+        assert "FileNotFoundError" in stderr
+
+    @patch("navigator.executor.subprocess.Popen")
+    def test_run_once_catches_permission_error(self, mock_popen):
+        """_run_once returns (-1, '', error_msg) when Popen raises PermissionError."""
+        mock_popen.side_effect = PermissionError("[Errno 13] Permission denied: '/no/exec'")
+        rc, stdout, stderr = _run_once(["/no/exec", "-p", "test"], {}, "/tmp", None)
+        assert rc == -1
+        assert stdout == ""
+        assert "PermissionError" in stderr
+
+    @patch("navigator.executor.subprocess.Popen")
+    def test_run_once_catches_oserror(self, mock_popen):
+        """_run_once catches OSError base class."""
+        mock_popen.side_effect = OSError("generic OS error")
+        rc, stdout, stderr = _run_once(["/bad", "-p", "test"], {}, "/tmp", None)
+        assert rc == -1
+        assert stdout == ""
+        assert "OSError" in stderr
+
+
+class TestStartupFailureLogs:
+    """Tests for startup failure integration with execution logs."""
+
+    def _make_command(self, tmp_path):
+        return Command(
+            name="fail-cmd",
+            prompt="Run tests",
+            environment=tmp_path,
+        )
+
+    @patch("navigator.executor.write_execution_log")
+    @patch("navigator.executor.subprocess.Popen")
+    @patch("navigator.executor.shutil.which", return_value="/fake/claude")
+    def test_startup_failure_writes_log_with_error(self, mock_which, mock_popen, mock_log, tmp_path):
+        """execute_command passes error= to write_execution_log on startup failure."""
+        mock_popen.side_effect = FileNotFoundError("[Errno 2] No such file or directory: '/fake/claude'")
+        mock_log.return_value = tmp_path / "test.log"
+
+        config = _make_config(tmp_path)
+        cmd = self._make_command(tmp_path)
+        execute_command(cmd, config)
+
+        mock_log.assert_called_once()
+        call_kwargs = mock_log.call_args
+        assert "FileNotFoundError" in (call_kwargs.kwargs.get("error") or call_kwargs[1].get("error", ""))
+
+    @patch("navigator.executor.write_execution_log")
+    @patch("navigator.executor.time.sleep")
+    @patch("navigator.executor.subprocess.Popen")
+    @patch("navigator.executor.shutil.which", return_value="/fake/claude")
+    def test_startup_failure_no_retry(self, mock_which, mock_popen, mock_sleep, mock_log, tmp_path):
+        """Startup failures (returncode -1) do not retry."""
+        mock_popen.side_effect = FileNotFoundError("[Errno 2] No such file or directory")
+        mock_log.return_value = tmp_path / "test.log"
+
+        config = _make_config(tmp_path)
+        cmd = self._make_command(tmp_path)
+        execute_command(cmd, config, retries_override=2)
+
+        assert mock_popen.call_count == 1
+
+    @patch("navigator.executor.write_execution_log")
+    @patch("navigator.executor.subprocess.Popen")
+    @patch("navigator.executor.shutil.which", return_value="/fake/claude")
+    def test_startup_failure_returns_negative_one(self, mock_which, mock_popen, mock_log, tmp_path):
+        """Startup failure result has returncode -1."""
+        mock_popen.side_effect = FileNotFoundError("[Errno 2] No such file or directory")
+        mock_log.return_value = tmp_path / "test.log"
+
+        config = _make_config(tmp_path)
+        cmd = self._make_command(tmp_path)
+        result = execute_command(cmd, config)
+
+        assert result.returncode == -1

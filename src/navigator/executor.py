@@ -133,15 +133,20 @@ def _run_once(
     process group, waits 5s grace, then SIGKILL. Returns exit code 124
     on timeout (matching coreutils timeout convention).
     """
-    proc = subprocess.Popen(
-        args,
-        env=env,
-        cwd=cwd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-        start_new_session=True,
-    )
+    try:
+        proc = subprocess.Popen(
+            args,
+            env=env,
+            cwd=cwd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            start_new_session=True,
+        )
+    except OSError as exc:
+        error_msg = f"{type(exc).__name__}: {exc}"
+        logger.error("Failed to start subprocess: %s (args=%s)", error_msg, args)
+        return (-1, "", error_msg)
 
     pgid = os.getpgid(proc.pid)
     _active_processes.add(proc.pid)
@@ -246,6 +251,8 @@ def execute_command(
 
         duration_so_far = time.monotonic() - start_time
 
+        error_detail = stderr if returncode == -1 else None
+
         last_log_path = write_execution_log(
             log_dir=config.log_dir,
             command_name=cmd.name,
@@ -254,7 +261,12 @@ def execute_command(
             duration=duration_so_far,
             stdout=stdout,
             stderr=stderr,
+            error=error_detail,
         )
+
+        if returncode == -1:
+            logger.error("Command '%s' failed to start: %s", cmd.name, stderr)
+            break
 
         if returncode == 0:
             logger.info("Command '%s' succeeded on attempt %d", cmd.name, attempt + 1)
