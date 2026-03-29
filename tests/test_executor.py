@@ -99,9 +99,10 @@ class TestBuildCommandArgs:
 
     def test_with_tools(self):
         """build_command_args includes --allowedTools for each tool."""
-        result = build_command_args("do thing", ["Read", "Bash"])
+        result = build_command_args("do thing", ["Read", "Bash"], claude_path="/usr/local/bin/claude")
+        assert result[0] == "/usr/local/bin/claude"
         assert result == [
-            "claude",
+            "/usr/local/bin/claude",
             "-p",
             "do thing",
             "--print",
@@ -113,12 +114,19 @@ class TestBuildCommandArgs:
 
     def test_no_tools(self):
         """build_command_args without tools has no --allowedTools flags."""
+        result = build_command_args("do thing", [], claude_path="/usr/local/bin/claude")
+        assert result[0] == "/usr/local/bin/claude"
+        assert result == ["/usr/local/bin/claude", "-p", "do thing", "--print"]
+
+    def test_default_claude_path(self):
+        """build_command_args without claude_path defaults to 'claude' for backward compat."""
         result = build_command_args("do thing", [])
+        assert result[0] == "claude"
         assert result == ["claude", "-p", "do thing", "--print"]
 
     def test_no_dangerously_skip_permissions(self):
-        """--dangerously-skip-permissions never appears in args."""
-        result = build_command_args("anything", ["Read", "Write", "Bash"])
+        """--dangerously-skip-permissions never appears in args regardless of claude_path."""
+        result = build_command_args("anything", ["Read", "Write", "Bash"], claude_path="/usr/local/bin/claude")
         assert "--dangerously-skip-permissions" not in result
 
 

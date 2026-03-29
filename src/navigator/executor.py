@@ -100,13 +100,20 @@ def build_clean_env(
     return env
 
 
-def build_command_args(prompt: str, allowed_tools: list[str]) -> list[str]:
+def build_command_args(prompt: str, allowed_tools: list[str], claude_path: str = "claude") -> list[str]:
     """Build the claude CLI argument list.
 
-    Constructs: claude -p <prompt> --print [--allowedTools <tool>]...
+    Constructs: <claude_path> -p <prompt> --print [--allowedTools <tool>]...
     Never includes --dangerously-skip-permissions.
+
+    Args:
+        prompt: The prompt text to pass to claude.
+        allowed_tools: List of tool names to allow via --allowedTools.
+        claude_path: Absolute path to the claude binary. Defaults to "claude"
+            for backward compatibility, but callers should pass the resolved
+            path from shutil.which() to support cron's minimal PATH.
     """
-    args = ["claude", "-p", prompt, "--print"]
+    args = [claude_path, "-p", prompt, "--print"]
 
     for tool in allowed_tools:
         args.extend(["--allowedTools", tool])
